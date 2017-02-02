@@ -12,9 +12,9 @@ Mandatory Update (manup) works like this:
 
 2. The small file contains the following information
 
- * The current latest version of the app
- * The minimum required version
- * Whether the app is enabled
+   * The current latest version of the app
+   * The minimum required version
+   * Whether the app is enabled
 
 3. The app compares itself with the version metadata, and presents an alert to
    the user. Alerts come in three flavours
@@ -33,7 +33,7 @@ Mandatory Update (manup) works like this:
 
 ## Requirements
 
- * Ionic 2 RC5
+ * Ionic 2 
  * Angular 2.x
  * semver
 
@@ -44,6 +44,27 @@ Manup assumes you are using Semantic Versioning for your app.
     npm install --save ionic-manup
 
 ## Usage
+
+### Remote file
+You need a hosted json file that contains the version metadata. This _could_ be part of your API. However, 
+often the reason for maintenance mode is because your API is down. An s3 bucket may be a safer bet,
+even though it means a little more work in maintaining the file.
+
+```json
+{
+  "ios": {
+    "latest": "2.4.1",
+    "minimum": "2.1.0",
+    "link": "",
+  },
+  android: {
+    "latest": "2.5.1",
+    "minimum": "2.1.0",
+    "link": "",
+  },
+  "enabled": true
+}
+```
 
 ### Import the module into your app
 
