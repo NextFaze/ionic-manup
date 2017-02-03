@@ -66,7 +66,7 @@ even though it means a little more work in maintaining the file.
     "minimum": "2.1.0",
     "link": "",
   },
-  android: {
+  "android": {
     "latest": "2.5.1",
     "minimum": "2.1.0",
     "link": "",
