@@ -3,8 +3,50 @@ import { AlertController, Platform } from 'ionic-angular';
 import { Http } from '@angular/http';
 import { Injectable, Optional } from '@angular/core';
 import { AppVersion, InAppBrowser } from 'ionic-native';
+import { Observable } from 'rxjs';
 
 import * as semver from 'semver';
+
+/**
+ * The types of alerts we may present
+ */
+enum AlertType {
+    /**
+     * A mandatory update is required
+     */
+    MANDATORY,
+
+    /**
+     * An optional update is available
+     */
+    OPTIONAL,
+
+    /**
+     * The app is disabled
+     */
+    MAINTENANCE,
+
+    /**
+     * Nothing to see here
+     */
+    NOP
+}
+
+interface PlatformData {
+    minimum: string,
+    latest: string,
+    link: string
+}
+
+/**
+ * What the metadata object should look like
+ */
+interface ManupData {
+    ios: PlatformData;
+    android: PlatformData;
+    windows: PlatformData;
+    enabled: boolean
+}
 
 @Injectable()
 export class ManupService {
@@ -36,13 +78,20 @@ export class ManupService {
                 console.log('waiting for platform');
                 this.platform.ready()
                 .then( () => {
-                    console.log('fetching remote manup file: ' + this.config.url)
-                    this.http.get(this.config.url).subscribe(response => {
-                        console.log('got response: ')
-                        console.log(response.text());
-                        this.evaluate(response.json()).then( () => {
-                            this.inProgress = false;
-                            resolve();
+                    this.getMetadata().subscribe(response => {
+                        if (!response.enabled) {
+                            return this.presentMaintenanceMode();
+                        }
+                        let platformData = this.getPlatformData(response);
+                        return this.evaluate(platformData).then(alert => {
+                            switch (alert) {
+                                case AlertType.MANDATORY:
+                                    return this.presentMandatoryUpdate(platformData);
+                                case AlertType.OPTIONAL:
+                                    return this.presentOptionalUpdate(platformData);
+                                default:
+                                    resolve();
+                            }
                         })
                     },
                     // Let the app run if we can't get the remote file
@@ -58,41 +107,60 @@ export class ManupService {
     }
 
     /**
-     * Evaluates the app version against manup data, presents alerts as needed.
+     * Fetches the remote metadata and returns an observable with the json
      */
-    private evaluate(metadata: any): Promise<any> {
-        let platformData: {minimum: string, latest: string, link: string};
+    private getMetadata(): Observable<ManupData> {
+        return this.http.get(this.config.url).map(response => response.json());
+    }
 
+    /**
+     * Returns the branch of the metadata relevant to this platform
+     */
+    private getPlatformData(metadata: ManupData): PlatformData {
         if (this.platform.is('ios')) {
-            platformData = metadata.ios;
+            return metadata.ios;
         }
-        else if (this.platform.is('android')) {
-            platformData = metadata.android;
+        if (this.platform.is('android')) {
+            return metadata.android;
         }
-        else {
-            return Promise.resolve(true);
+        if (this.platform.is('windows')) {
+            return metadata.windows;
         }
+        throw new Error('Unknown platform');
+    }
 
-        if (metadata.disabled) {
-            return this.presentMaintenanceMode()
-        }
-        else {
-            return AppVersion.getVersionNumber().then(version => {
-                try {
-                    if (semver.lt(version, platformData.minimum)) {
-                        return this.presentMandatoryUpdate(platformData)
-                    }
-                    else if (semver.lt(version, platformData.latest)) {
-                        return this.presentOptionalUpdate(platformData)
-                    }
-                    else {
-                        return Promise.resolve(true);
-                    }
-                }
-                catch(e) {
-                    return Promise.resolve(true);
-                }
-            });
+    private evaluate(platformData: PlatformData): Promise<AlertType> {
+        return AppVersion.getVersionNumber().then(version => {
+
+            if (semver.lt(version, platformData.minimum)) {
+                return AlertType.MANDATORY;
+            }
+            else if (semver.lt(version, platformData.latest)) {
+                return AlertType.OPTIONAL;
+            }
+            return AlertType.NOP;
+        });
+    }
+
+
+    /**
+     * Presents an update alert.
+     * 
+     * @param type The type of alert to show
+     * @param platformData The metadata for the platform
+     * 
+     * @returns A promise that resolves when this whole thing is over.
+     */
+    private presentAlert(type: AlertType, platformData: any): Promise<any> {
+        switch (type) {
+            case AlertType.MANDATORY:
+                return this.presentMandatoryUpdate(platformData);
+
+            case AlertType.OPTIONAL:
+                return this.presentOptionalUpdate(platformData);
+
+            case AlertType.MAINTENANCE:
+                return this.presentMaintenanceMode();
         }
     }
 
