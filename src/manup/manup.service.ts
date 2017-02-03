@@ -1,7 +1,7 @@
 import { ManupConfig } from './manup.config';
 import { AlertController, Platform } from 'ionic-angular';
 import { Http } from '@angular/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { AppVersion } from 'ionic-native';
 
 import * as semver from 'semver';
@@ -9,7 +9,7 @@ import * as semver from 'semver';
 @Injectable()
 export class ManupService {
 
-    public constructor(private http: Http, private alert: AlertController, private platform: Platform, private storage: Storage, private config: ManupConfig) {}
+    public constructor(private http: Http, private alert: AlertController, private platform: Platform, @Optional() private storage: Storage, private config: ManupConfig) {}
 
     private inProgress: boolean = false; 
     private currentPromise: Promise<any>;
