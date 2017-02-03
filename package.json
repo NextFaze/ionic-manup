@@ -5,14 +5,12 @@
   "main": "index.js",
   "scripts": {
     "clean": "rm -rf lib",
-
+    "mocha": "node_modules/.bin/mocha",
     "pretest": "npm run build",
-    "test": "mocha",
+    "test": "npm run mocha lib/**/**.spec.js",
     "tsc": "node_modules/.bin/tsc",
-
     "build": "npm run tsc",
     "prebuild": "npm run clean",
-
     "prepublish": "npm run build; mv lib/* .",
     "postpublish": "rm *.d.ts *.js *.js.map"
   },
@@ -37,6 +35,8 @@
     "@angular/platform-browser": "^2.2.1",
     "@angular/platform-browser-dynamic": "^2.2.1",
     "@angular/platform-server": "^2.2.1",
+    "@types/chai": "^3.4.34",
+    "@types/mocha": "^2.2.38",
     "@types/semver": "^5.3.30",
     "chai": "^3.5.0",
     "ionic-angular": "^2.0.0",
