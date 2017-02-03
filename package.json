@@ -13,8 +13,7 @@
     "ngc": "node_modules/.bin/ngc",
     "build": "npm run ngc",
     "prebuild": "npm run clean",
-    "prepublish": "npm run build",
-    "postpublish": "rm *.d.ts *.js *.js.map"
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
