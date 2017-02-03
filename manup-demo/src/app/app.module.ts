@@ -17,7 +17,7 @@ import { ManupModule, ManupService } from 'ionic-manup';
   ],
   imports: [
     IonicModule.forRoot(MyApp),
-    ManupModule.forRoot({url: 'https://apps.eldersapps.com.au/manup/com.elders.grain.json'})
+    ManupModule.forRoot({url: 'https://gitlab.nextfaze.com/nextfaze/ionic-manup/raw/master/manup-demo/manup.json'})
   ],
   bootstrap: [IonicApp],
   entryComponents: [
