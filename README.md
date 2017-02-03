@@ -11,20 +11,16 @@ Mandatory Update (manup) works like this:
    downloads a small file from a remote server
 
 2. The small file contains the following information
-gt
    * The current latest version of the app
    * The minimum required version
    * Whether the app is enabled
 
 3. The app compares itself with the version metadata, and presents an alert to
    the user. Alerts come in three flavours
-
    * Mandatory Update required. The user will be notified that they need to
      update to continue. The alert has a link to the relevant app store.
-
    * Optional Update. The user will be notified there is an update, but will
      have the option to continue using the current version
-
    * Maintenance Mode. The user will be notified that the app is unavailable,
      and to try again later.
 
