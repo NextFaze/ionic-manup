@@ -6,6 +6,7 @@
   "scripts": {
     "clean": "rm -rf lib",
 
+    "pretest": "npm run build",
     "test": "mocha",
     "tsc": "node_modules/.bin/tsc",
 
