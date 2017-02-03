@@ -129,3 +129,6 @@ ionic emulate ios
 ```
 
 Assuming you have Ionic installed.
+
+![Mandatory Update](https://raw.githubusercontent.com/NextFaze/ionic-manup/master/images/mandatory.png)
+![Mandatory Update](https://raw.githubusercontent.com/NextFaze/ionic-manup/master/images/optional.png)
