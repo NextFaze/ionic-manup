@@ -4,7 +4,9 @@
   "description": "Mandatory Update for Ionic 2 apps",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "tsc": "node_modules/.bin/tsc",
+    "build": "npm run tsc"
   },
   "repository": {
     "type": "git",
@@ -18,7 +20,21 @@
   "author": "Michael Marner <mmarner@nextfaze.com>",
   "license": "MIT",
   "devDependencies": {
+    "@angular/common": "^2.4.5",
+    "@angular/core": "^2.4.5",
     "chai": "^3.5.0",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "rxjs": "^5.1.0",
+    "typescript": "^2.1.5",
+    "zone.js": "^0.7.6"
+  },
+  "peerDependencies": {
+    "@angular/common": "^2.0.0",
+    "@angular/core": "^2.0.0",
+    "rxjs": "^5.1.0",
+    "zone.js": "^0.7.6"
+  },
+  "dependencies": {
+    "semver": "^5.3.0"
   }
 }
