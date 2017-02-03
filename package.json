@@ -20,19 +20,29 @@
   "author": "Michael Marner <mmarner@nextfaze.com>",
   "license": "MIT",
   "devDependencies": {
-    "@angular/common": "^2.4.5",
-    "@angular/core": "^2.4.5",
+    "@angular/common": "^2.2.1",
+    "@angular/compiler": "^2.2.1",
+    "@angular/compiler-cli": "^2.2.1",
+    "@angular/core": "^2.2.1",
+    "@angular/forms": "^2.2.1",
+    "@angular/http": "^2.2.1",
+    "@angular/platform-browser": "^2.2.1",
+    "@angular/platform-browser-dynamic": "^2.2.1",
+    "@angular/platform-server": "^2.2.1",
+    "@types/semver": "^5.3.30",
     "chai": "^3.5.0",
+    "ionic-angular": "^2.0.0",
+    "ionic-native": "^2.4.1",
     "mocha": "^3.2.0",
-    "rxjs": "^5.1.0",
+    "rxjs": "^5.0.0-beta.12",
     "typescript": "^2.1.5",
-    "zone.js": "^0.7.6"
+    "zone.js": "^0.6.26"
   },
   "peerDependencies": {
     "@angular/common": "^2.0.0",
     "@angular/core": "^2.0.0",
-    "rxjs": "^5.1.0",
-    "zone.js": "^0.7.6"
+    "rxjs": "^5.0.0-beta.12",
+    "zone.js": "^0.6.26"
   },
   "dependencies": {
     "semver": "^5.3.0"
