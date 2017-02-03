@@ -38,15 +38,19 @@ Mandatory Update (manup) works like this:
 
 In your ionic project root:
 
-    npm install --save @ionic/storage ionic-native
-    ionic plugin add cordova-plugin-app-version
-    ionic plugin add cordova-plugin-inappbrowser
+```sh
+npm install --save @ionic/storage ionic-native
+ionic plugin add cordova-plugin-app-version
+ionic plugin add cordova-plugin-inappbrowser
+```
 
 Manup assumes you are using Semantic Versioning for your app.
 
 ## Installation
 
-    npm install --save ionic-manup
+```sh
+npm install --save ionic-manup
+```
 
 ## Usage
 
@@ -113,3 +117,15 @@ export class MyApp {
   }
 }
 ```
+
+
+## Demonstration App
+
+A demonstration app is in the `manup-demo` folder. This is the default Ionic 2 tabs starter app, with Manup added.
+
+```sh
+cd manup-demo
+ionic emulate ios
+```
+
+Assuming you have Ionic installed.
