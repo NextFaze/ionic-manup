@@ -98,10 +98,10 @@ export class ManupService {
                         text: 'Update',
                         handler: () => {
                             if (this.platform.is('ios')) {
-                              new InAppBrowser("https://itunes.apple.com/au/app/elders-grain/id1145184771?mt=8", '_system');
+                              //new InAppBrowser("https://itunes.apple.com/au/app/elders-grain/id1145184771?mt=8", '_system');
                             }
                             else {
-                              new InAppBrowser("market://details?id=com.elders.grain", '_system');
+                              //new InAppBrowser("market://details?id=com.elders.grain", '_system');
                             }
                             return false;
                         }
@@ -134,10 +134,10 @@ export class ManupService {
                         text: 'Update',
                         handler: () => {
                             if (this.platform.is('ios')) {
-                              new InAppBrowser("https://itunes.apple.com/au/app/elders-grain/id1145184771?mt=8", '_system');
+                              //new InAppBrowser("https://itunes.apple.com/au/app/elders-grain/id1145184771?mt=8", '_system');
                             }
                             else {
-                              new InAppBrowser("market://details?id=com.elders.grain", '_system');
+                              //new InAppBrowser("market://details?id=com.elders.grain", '_system');
                             }
                             return false;
                         }

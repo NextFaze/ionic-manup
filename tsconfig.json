@@ -4,11 +4,19 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
+    "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "lib": [ "es2015", "dom" ],
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,
-    "outDir": "lib"
-  }
+    "outDir": "lib",
+    "rootDir": "src"
+  },
+  "exclude": [
+    "node_modules",
+    "manup-demo",
+    "lib"
+  ]
+
 }

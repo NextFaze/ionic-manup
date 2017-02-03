@@ -6,9 +6,6 @@ import { ManupService } from './manup.service';
     providers: [
         ManupService
     ],
-    exports: [
-        ManupService
-    ]
 })
 export class ManupModule {
 
