@@ -23,7 +23,7 @@
     "angular",
     "manup"
   ],
-  "author": "Michael Marner <mmarner@nextfaze.com>",
+  "author": "Michael Marner <npm-support@nextfaze.com>",
   "license": "MIT",
   "devDependencies": {
     "@angular/common": "^2.2.1",
