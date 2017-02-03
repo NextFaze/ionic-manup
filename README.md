@@ -11,7 +11,7 @@ Mandatory Update (manup) works like this:
    downloads a small file from a remote server
 
 2. The small file contains the following information
-
+gt
    * The current latest version of the app
    * The minimum required version
    * Whether the app is enabled
@@ -88,9 +88,9 @@ Import the module into your `app.module.ts` file, and call `ManupModule.forRoot`
 
 ### Run the manup service before doing any application initialisation logic
 
-Modify your `app.component` class to call ManupService.versionCheck():
+Modify your `app.component` class to call ManupService.validate():
 
-`versionCheck` returns a promise that resolves if the version check was ok and the app can continue initialising.
+`validate` returns a promise that resolves if the version check was ok and the app can continue initialising.
 
 ```ts
 import { Component } from '@angular/core';
@@ -109,7 +109,7 @@ export class MyApp {
       StatusBar.styleDefault();
       Splashscreen.hide();
 
-      manup.versionCheck().then( () => {
+      manup.validate().then( () => {
         // app initialisation
       })
 

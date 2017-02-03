@@ -19,7 +19,7 @@ export class MyApp {
       StatusBar.styleDefault();
       Splashscreen.hide();
 
-      manup.versionCheck();
+      manup.validate();
 
     });
   }

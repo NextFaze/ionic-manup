@@ -28,7 +28,7 @@ export class ManupService {
      * 
      * @Returns a promise that resolves if the app is able to continue.
      */
-    public versionCheck(): Promise<any> {
+    public validate(): Promise<any> {
 
         if (!this.inProgress) {
             this.inProgress = true;
