@@ -4,9 +4,13 @@
   "description": "Mandatory Update for Ionic 2 apps",
   "main": "index.js",
   "scripts": {
+    "clean": "rm -r lib",
+
     "test": "mocha",
     "tsc": "node_modules/.bin/tsc",
-    "build": "npm run tsc"
+
+    "build": "npm run tsc",
+    "prebuild": "npm run clean"
   },
   "repository": {
     "type": "git",
