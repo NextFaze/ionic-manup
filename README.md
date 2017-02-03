@@ -35,8 +35,16 @@ Mandatory Update (manup) works like this:
 
  * Ionic 2 
  * Angular 2.x
- * ionic-native (needed to get the app version and name) 
- * @ionic/storage (used for caching)
+ * `ionic-native` (needed to get the app version and name) 
+ * `@ionic/storage` (used for caching)
+ * `cordova-plugin-app-version` to get the installed app name and version
+ * `cordova-plugin-inappbrowser` to launch the link to the app/play store
+
+In your ionic project root:
+
+    npm install --save @ionic/storage ionic-native
+    ionic plugin add cordova-plugin-app-version
+    ionic plugin add cordova-plugin-inappbrowser
 
 Manup assumes you are using Semantic Versioning for your app.
 
@@ -69,4 +77,43 @@ even though it means a little more work in maintaining the file.
 
 ### Import the module into your app
 
+Import the module into your `app.module.ts` file, and call `ManupModule.forRoot`, providing the URL to your metadata file:
+
+```ts
+    import { ManupModule } from 'ionic-manup';
+
+    // in your module's import array
+    ManupModule.forRoot({url: 'https://example.com/manup.json'})
+```
+
 ### Run the manup service before doing any application initialisation logic
+
+Modify your `app.component` class to call ManupService.versionCheck():
+
+`versionCheck` returns a promise that resolves if the version check was ok and the app can continue initialising.
+
+```ts
+import { Component } from '@angular/core';
+import { Platform } from 'ionic-angular';
+import { ManupService } from 'ionic-manup';
+
+@Component({
+  templateUrl: 'app.html'
+})
+export class MyApp {
+
+  constructor(platform: Platform, private manup: ManupService) {
+    platform.ready().then(() => {
+      // Okay, so the platform is ready and our plugins are available.
+      // Here you can do any higher level native things you might need.
+      StatusBar.styleDefault();
+      Splashscreen.hide();
+
+      manup.versionCheck().then( () => {
+        // app initialisation
+      })
+
+    });
+  }
+}
+```
