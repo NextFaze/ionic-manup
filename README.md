@@ -35,7 +35,8 @@ Mandatory Update (manup) works like this:
 
  * Ionic 2 
  * Angular 2.x
- * semver
+ * ionic-native (needed to get the app version and name) 
+ * @ionic/storage (used for caching)
 
 Manup assumes you are using Semantic Versioning for your app.
 

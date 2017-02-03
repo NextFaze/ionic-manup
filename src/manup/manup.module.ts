@@ -20,6 +20,5 @@ export class ManupModule {
                 {provide: ManupConfig, useValue: config}
             ],
         }
-
     }
 }

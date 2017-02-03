@@ -9,7 +9,7 @@ import * as semver from 'semver';
 @Injectable()
 export class ManupService {
 
-    public constructor(private http: Http, private alert: AlertController, private platform: Platform, private storage: Storage, config: ManupConfig) {}
+    public constructor(private http: Http, private alert: AlertController, private platform: Platform, private storage: Storage, private config: ManupConfig) {}
 
     private inProgress: boolean = false; 
     private currentPromise: Promise<any>;
@@ -26,14 +26,11 @@ export class ManupService {
             this.currentPromise = new Promise( (resolve, reject) => {
                 this.platform.ready()
                 .then( () => {
-                    this.http.get(this.config.MANUP_URL + '?q=' + Math.random()).subscribe(response => {
-                        this.storage.set('manup', response.text())
-                        .then( () => {
-                            this.evaluate(response.json()).then( () => {
-                                this.inProgress = false;
-                                resolve();
-                            })
-                        });
+                    this.http.get(this.config.url + '?q=' + Math.random()).subscribe(response => {
+                        this.evaluate(response.json()).then( () => {
+                            this.inProgress = false;
+                            resolve();
+                        })
                     },
                     // Let the app run if we can't get the remote file
                     error => {
