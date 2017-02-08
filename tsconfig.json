@@ -17,6 +17,9 @@
     "node_modules",
     "manup-demo",
     "lib"
-  ]
+  ],
+  "angularCompilerOptions": {
+      "genDir": "lib"
+  }
 
 }

@@ -8,5 +8,6 @@
         "minimum": "1.0.0",
         "latest": "1.0.0",
         "link": "http://example.com"
-    }
+    },
+    "enabled": true
 }
