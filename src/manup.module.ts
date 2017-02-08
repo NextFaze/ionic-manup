@@ -1,20 +1,20 @@
-import { ManupConfig } from './manup.config';
+import { ManUpConfig } from './manup.config';
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { ManupService } from './manup.service';
+import { ManUpService } from './manup.service';
 
 @NgModule({
     providers: [
-        ManupService
+        ManUpService
     ],
 })
-export class ManupModule {
+export class ManUpModule {
 
-    static forRoot(config: ManupConfig): ModuleWithProviders {
+    static forRoot(config: ManUpConfig): ModuleWithProviders {
 
         return {
-            ngModule: ManupModule,
+            ngModule: ManUpModule,
             providers: [
-                {provide: ManupConfig, useValue: config}
+                {provide: ManUpConfig, useValue: config}
             ],
         }
     }

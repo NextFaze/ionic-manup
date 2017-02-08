@@ -1,4 +1,4 @@
-import { ManupConfig } from './manup.config';
+import { ManUpConfig } from './manup.config';
 import { AlertController, Platform } from 'ionic-angular';
 import { Http } from '@angular/http';
 import { Injectable, Optional } from '@angular/core';
@@ -12,7 +12,7 @@ import * as semver from 'semver';
 /**
  * The types of alerts we may present
  */
-enum AlertType {
+export enum AlertType {
     /**
      * A mandatory update is required
      */
@@ -44,16 +44,16 @@ interface PlatformData {
 /**
  * What the metadata object should look like
  */
-interface ManupData {
+interface ManUpData {
     ios: PlatformData;
     android: PlatformData;
     windows: PlatformData;
 }
 
 @Injectable()
-export class ManupService {
+export class ManUpService {
 
-    public constructor(private http: Http, private alert: AlertController, private platform: Platform, private config: ManupConfig) {}
+    public constructor(private http: Http, private alert: AlertController, private platform: Platform, private config: ManUpConfig) {}
 
     /**
      * True if there is an alert already displayed. Used to prevent multiple alerts 
@@ -123,14 +123,14 @@ export class ManupService {
     /**
      * Fetches the remote metadata and returns an observable with the json
      */
-    private metadata(): Observable<ManupData> {
+    private metadata(): Observable<ManUpData> {
         return this.http.get(this.config.url).map(response => response.json());
     }
 
     /**
      * Returns the branch of the metadata relevant to this platform
      */
-    private getPlatformData(metadata: ManupData): PlatformData {
+    private getPlatformData(metadata: ManUpData): PlatformData {
         if (this.platform.is('ios')) {
             return metadata.ios;
         }
