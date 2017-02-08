@@ -5,6 +5,8 @@ import { Injectable, Optional } from '@angular/core';
 import { AppVersion, InAppBrowser } from 'ionic-native';
 import { Observable } from 'rxjs';
 
+import 'rxjs/add/operator/map';
+
 import * as semver from 'semver';
 
 /**
@@ -35,7 +37,8 @@ enum AlertType {
 interface PlatformData {
     minimum: string,
     latest: string,
-    link: string
+    link: string,
+    enabled: boolean
 }
 
 /**
@@ -45,7 +48,6 @@ interface ManupData {
     ios: PlatformData;
     android: PlatformData;
     windows: PlatformData;
-    enabled: boolean
 }
 
 @Injectable()
@@ -63,7 +65,6 @@ export class ManupService {
      * A reference to the current unresolved promise
      */
     private currentPromise: Promise<any>;
-    
 
     /**
      * Begins the manup check process.
@@ -78,27 +79,18 @@ export class ManupService {
                 console.log('waiting for platform');
                 this.platform.ready()
                 .then( () => {
-                    this.getMetadata().subscribe(response => {
-                        if (!response.enabled) {
-                            return this.presentMaintenanceMode();
-                        }
-                        let platformData = this.getPlatformData(response);
-                        return this.evaluate(platformData).then(alert => {
+                    this.metadata()
+                    .map(response => this.getPlatformData(response))
+                    .subscribe(metadata => {
+                        this.evaluate(metadata).then(alert => {
                             switch (alert) {
-                                case AlertType.MANDATORY:
-                                    return this.presentMandatoryUpdate(platformData);
-                                case AlertType.OPTIONAL:
-                                    return this.presentOptionalUpdate(platformData);
-                                default:
+                                case AlertType.NOP:
                                     resolve();
+                                    break;
+                                default:
+                                    return this.presentAlert(alert, metadata);
                             }
                         })
-                    },
-                    // Let the app run if we can't get the remote file
-                    error => {
-                        console.log('could not fetch manup metadata');
-                        this.inProgress = false;
-                        resolve();
                     });
                 })
             });
@@ -107,9 +99,31 @@ export class ManupService {
     }
 
     /**
+     * Evaluates what kind of update is required, if any.
+     * 
+     * Returns a promise that resolves with an alert type.
+     */
+    private evaluate(metadata: PlatformData): Promise<AlertType> {
+        if (!metadata.enabled) {
+            return Promise.resolve(AlertType.MAINTENANCE);
+        }
+        return AppVersion.getVersionNumber().then(version => {
+
+            if (semver.lt(version, metadata.minimum)) {
+                return AlertType.MANDATORY;
+            } 
+            else if (semver.lt(version, metadata.latest)) {
+                return AlertType.OPTIONAL;
+            }
+            return AlertType.NOP;
+        });
+    }
+
+
+    /**
      * Fetches the remote metadata and returns an observable with the json
      */
-    private getMetadata(): Observable<ManupData> {
+    private metadata(): Observable<ManupData> {
         return this.http.get(this.config.url).map(response => response.json());
     }
 
@@ -127,19 +141,6 @@ export class ManupService {
             return metadata.windows;
         }
         throw new Error('Unknown platform');
-    }
-
-    private evaluate(platformData: PlatformData): Promise<AlertType> {
-        return AppVersion.getVersionNumber().then(version => {
-
-            if (semver.lt(version, platformData.minimum)) {
-                return AlertType.MANDATORY;
-            }
-            else if (semver.lt(version, platformData.latest)) {
-                return AlertType.OPTIONAL;
-            }
-            return AlertType.NOP;
-        });
     }
 
 
