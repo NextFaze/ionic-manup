@@ -2,6 +2,8 @@
 
 [![Build
 Status](https://travis-ci.org/NextFaze/ionic-manup.svg?branch=master)](https://travis-ci.org/NextFaze/ionic-manup)
+[![Coverage
+Status](https://coveralls.io/repos/github/NextFaze/ionic-manup/badge.svg)](https://coveralls.io/github/NextFaze/ionic-manup)
 
 Sometimes you have an app which talks to services in the cloud. Sometimes,
 those services change, and your app no longer works. Wouldn't it be great if
