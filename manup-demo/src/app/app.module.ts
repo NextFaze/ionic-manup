@@ -5,7 +5,7 @@ import { AboutPage } from '../pages/about/about';
 import { ContactPage } from '../pages/contact/contact';
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
-import { ManupModule, ManupService } from 'ionic-manup';
+import { ManUpModule, ManUpService } from 'ionic-manup';
 
 @NgModule({
   declarations: [
@@ -17,7 +17,7 @@ import { ManupModule, ManupService } from 'ionic-manup';
   ],
   imports: [
     IonicModule.forRoot(MyApp),
-    ManupModule.forRoot({url: 'https://raw.githubusercontent.com/NextFaze/ionic-manup/master/manup-demo/manup.json'})
+    ManUpModule.forRoot({url: 'https://raw.githubusercontent.com/NextFaze/ionic-manup/master/manup-demo/manup.json'})
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -28,7 +28,7 @@ import { ManupModule, ManupService } from 'ionic-manup';
     TabsPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
-    ManupService
+    ManUpService
   ]
 })
 export class AppModule {}

@@ -83,13 +83,13 @@ even though it means a little more work in maintaining the file.
 
 ### Import the module into your app
 
-Import the module into your `app.module.ts` file, and call `ManupModule.forRoot`, providing the URL to your metadata file:
+Import the module into your `app.module.ts` file, and call `ManUpModule.forRoot`, providing the URL to your metadata file:
 
 ```ts
-    import { ManupModule } from 'ionic-manup';
+    import { ManUpModule } from 'ionic-manup';
 
     // in your module's import array
-    ManupModule.forRoot({url: 'https://example.com/manup.json'})
+    ManUpModule.forRoot({url: 'https://example.com/manup.json'})
 ```
 
 ### Run the manup service before doing any application initialisation logic
@@ -101,14 +101,14 @@ Modify your `app.component` class to call ManupService.validate():
 ```ts
 import { Component } from '@angular/core';
 import { Platform } from 'ionic-angular';
-import { ManupService } from 'ionic-manup';
+import { ManUpService } from 'ionic-manup';
 
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
 
-  constructor(platform: Platform, private manup: ManupService) {
+  constructor(platform: Platform, private manup: ManUpService) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
