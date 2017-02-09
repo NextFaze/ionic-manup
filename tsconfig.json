@@ -16,7 +16,8 @@
   "exclude": [
     "node_modules",
     "manup-demo",
-    "lib"
+    "lib",
+    "src/test.ts"
   ],
   "angularCompilerOptions": {
       "genDir": "lib"
