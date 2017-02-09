@@ -34,7 +34,7 @@ export enum AlertType {
     NOP
 }
 
-interface PlatformData {
+export interface PlatformData {
     minimum: string,
     latest: string,
     link: string,
@@ -44,7 +44,7 @@ interface PlatformData {
 /**
  * What the metadata object should look like
  */
-interface ManUpData {
+export interface ManUpData {
     ios: PlatformData;
     android: PlatformData;
     windows: PlatformData;
@@ -130,7 +130,7 @@ export class ManUpService {
     /**
      * Returns the branch of the metadata relevant to this platform
      */
-    private getPlatformData(metadata: ManUpData): PlatformData {
+    public getPlatformData(metadata: ManUpData): PlatformData {
         if (this.platform.is('ios')) {
             return metadata.ios;
         }
