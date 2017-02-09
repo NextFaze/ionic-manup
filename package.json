@@ -2,7 +2,7 @@
   "name": "ionic-manup",
   "version": "0.0.4",
   "description": "Mandatory Update for Ionic 2 apps",
-  "main": "lib/index.js",
+  "main": "lib/main.js",
   "typings": "lib/index",
   "scripts": {
     "clean": "rm -rf lib",
