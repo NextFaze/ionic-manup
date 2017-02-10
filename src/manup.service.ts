@@ -52,6 +52,7 @@ export interface ManUpData {
 
 @Injectable()
 export class ManUpService {
+    public AppVersion: any = AppVersion;
 
     public constructor(private http: Http, private alert: AlertController, private platform: Platform, private config: ManUpConfig) {}
 
@@ -107,7 +108,7 @@ export class ManUpService {
         if (!metadata.enabled) {
             return Promise.resolve(AlertType.MAINTENANCE);
         }
-        return AppVersion.getVersionNumber().then(version => {
+        return this.AppVersion.getVersionNumber().then((version:string) => {
 
             if (semver.lt(version, metadata.minimum)) {
                 return AlertType.MANDATORY;
@@ -171,7 +172,7 @@ export class ManUpService {
      * @returns a promise that will never resolve, because the app should not continue
      */
     presentMaintenanceMode(): Promise<any> {
-        return AppVersion.getAppName().then( name => {
+        return this.AppVersion.getAppName().then( (name:string) => {
             return new Promise((resolve, reject) => {
                 let alert = this.alert.create({
                     enableBackdropDismiss: false,
@@ -189,7 +190,7 @@ export class ManUpService {
      * @returns a promise that will never resolve, because the app should not continue
      */
     presentMandatoryUpdate(platformData: any): Promise<any> {
-        return AppVersion.getAppName().then( name => {
+        return this.AppVersion.getAppName().then( (name:string) => {
             return new Promise((resolve, reject) => {
                 let alert = this.alert.create({
                     enableBackdropDismiss: false,
@@ -216,7 +217,7 @@ export class ManUpService {
      * @returns a promise that will resolves if the user selects 'not now'
      */
     presentOptionalUpdate(platformData: any): Promise<any> {
-        return AppVersion.getAppName().then( name => {
+        return this.AppVersion.getAppName().then( (name:string) => {
             return new Promise((resolve, reject) => {
                 let alert = this.alert.create({
                     enableBackdropDismiss: false,
