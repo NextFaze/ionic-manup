@@ -8,10 +8,6 @@ class MockAppVersion {
 
 describe('Manup Spec', function() {
 
-    it('The world is sane', function() {
-        expect(2+2).toEqual(4);
-    })
-
     describe('evaluate', function() {
         it('Should return maintenance mode if json says disabled', function(done) {
             let json = {
