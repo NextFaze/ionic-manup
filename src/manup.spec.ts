@@ -1,10 +1,83 @@
-import { ManUpService } from './manup.service';
+import { AlertType, ManUpService } from './manup.service';
+
+class MockAppVersion {
+    public static getVersionNumber() {
+        return Promise.resolve("2.3.4");
+    }
+}
 
 describe('Manup Spec', function() {
 
     it('The world is sane', function() {
         expect(2+2).toEqual(4);
     })
+
+    describe('evaluate', function() {
+        it('Should return maintenance mode if json says disabled', function(done) {
+            let json = {
+                minimum: "2.3.4",
+                latest: "2.3.4",
+                link: "http://example.com",
+                enabled: false
+            };
+
+            let manup = new ManUpService(null, null, null, null);
+            manup.AppVersion = MockAppVersion;
+
+            manup.evaluate(json).then(function(alert) {
+                expect(alert).toEqual(AlertType.MAINTENANCE);
+                done();
+            });
+        });
+        it('Should return mandatory update if app version less than minimum', function(done) {
+            let json = {
+                minimum: "4.3.4",
+                latest: "6.3.4",
+                link: "http://example.com",
+                enabled: true 
+            };
+
+            let manup = new ManUpService(null, null, null, null);
+            manup.AppVersion = MockAppVersion;
+
+            manup.evaluate(json).then(function(alert) {
+                expect(alert).toEqual(AlertType.MANDATORY);
+                done();
+            });
+        });
+        it('Should return optional update if app version less than latest', function(done) {
+            let json = {
+                minimum: "2.3.4",
+                latest: "6.3.4",
+                link: "http://example.com",
+                enabled: true 
+            };
+
+            let manup = new ManUpService(null, null, null, null);
+            manup.AppVersion = MockAppVersion;
+
+            manup.evaluate(json).then(function(alert) {
+                expect(alert).toEqual(AlertType.OPTIONAL);
+                done();
+            });
+        });
+        it('Should return nop if app version latest', function(done) {
+            let json = {
+                minimum: "2.3.4",
+                latest: "2.3.4",
+                link: "http://example.com",
+                enabled: true 
+            };
+
+            let manup = new ManUpService(null, null, null, null);
+            manup.AppVersion = MockAppVersion;
+
+            manup.evaluate(json).then(function(alert) {
+                expect(alert).toEqual(AlertType.NOP);
+                done();
+            });
+        });
+    });
 
     describe('getPlatformData', function() {
         let json = {

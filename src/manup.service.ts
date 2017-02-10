@@ -104,7 +104,7 @@ export class ManUpService {
      * 
      * Returns a promise that resolves with an alert type.
      */
-    private evaluate(metadata: PlatformData): Promise<AlertType> {
+    public evaluate(metadata: PlatformData): Promise<AlertType> {
         if (!metadata.enabled) {
             return Promise.resolve(AlertType.MAINTENANCE);
         }
