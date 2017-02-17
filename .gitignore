@@ -4,3 +4,4 @@ lib
 *.js.map
 *.js
 *.un~
+coverage
