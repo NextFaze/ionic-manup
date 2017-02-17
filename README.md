@@ -69,13 +69,13 @@ even though it means a little more work in maintaining the file.
   "ios": {
     "latest": "2.4.1",
     "minimum": "2.1.0",
-    "link": "",
+    "url": "http://example.com/myAppUpdate",
     "enabled": true
   },
   "android": {
     "latest": "2.5.1",
     "minimum": "2.1.0",
-    "link": "",
+    "url": "http://example.com/myAppUpdate/android",
     "enabled": true
   },
 }

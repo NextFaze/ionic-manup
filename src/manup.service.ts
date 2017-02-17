@@ -37,7 +37,7 @@ export enum AlertType {
 export interface PlatformData {
     minimum: string,
     latest: string,
-    link: string,
+    url: string,
     enabled: boolean
 }
 
@@ -200,7 +200,7 @@ export class ManUpService {
                         {
                             text: 'Update',
                             handler: () => {
-                                new InAppBrowser(platformData.link, '_system');
+                                new InAppBrowser(platformData.url, '_system');
                                 return false;
                             }
                         }
@@ -233,7 +233,7 @@ export class ManUpService {
                         {
                             text: 'Update',
                             handler: () => {
-                                new InAppBrowser(platformData.link, '_system');
+                                new InAppBrowser(platformData.url, '_system');
                                 return false;
                             }
                         }

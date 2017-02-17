@@ -13,7 +13,7 @@ describe('Manup Spec', function() {
             let json = {
                 minimum: "2.3.4",
                 latest: "2.3.4",
-                link: "http://example.com",
+                url: "http://example.com",
                 enabled: false
             };
 
@@ -29,7 +29,7 @@ describe('Manup Spec', function() {
             let json = {
                 minimum: "4.3.4",
                 latest: "6.3.4",
-                link: "http://example.com",
+                url: "http://example.com",
                 enabled: true 
             };
 
@@ -45,7 +45,7 @@ describe('Manup Spec', function() {
             let json = {
                 minimum: "2.3.4",
                 latest: "6.3.4",
-                link: "http://example.com",
+                url: "http://example.com",
                 enabled: true 
             };
 
@@ -61,7 +61,7 @@ describe('Manup Spec', function() {
             let json = {
                 minimum: "2.3.4",
                 latest: "2.3.4",
-                link: "http://example.com",
+                url: "http://example.com",
                 enabled: true 
             };
 
@@ -81,19 +81,19 @@ describe('Manup Spec', function() {
                 minimum: "1.0.0",
                 latest: "2.4.5",
                 enabled: true,
-                link: "http://example.com" 
+                url: "http://example.com" 
             },
             android: {
                 minimum: "4.0.1",
                 latest: "6.2.1",
                 enabled: true,
-                link: "http://example.com" 
+                url: "http://example.com" 
             },
             windows: {
                 minimum: "1.0.0",
                 latest: "1.0.1",
                 enabled: false,
-                link: "http://example.com" 
+                url: "http://example.com" 
             },
         }
 
