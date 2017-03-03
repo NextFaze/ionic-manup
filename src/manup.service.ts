@@ -4,6 +4,7 @@ import { Http } from '@angular/http';
 import { Injectable, Optional } from '@angular/core';
 import { AppVersion, InAppBrowser } from 'ionic-native';
 import { Observable } from 'rxjs';
+import { Storage } from '@ionic/storage';
 
 import 'rxjs/add/operator/map';
 
@@ -54,7 +55,7 @@ export interface ManUpData {
 export class ManUpService {
     public AppVersion: any = AppVersion;
 
-    public constructor(private http: Http, private alert: AlertController, private platform: Platform, private config: ManUpConfig) {}
+    public constructor(private http: Http, private alert: AlertController, private platform: Platform, private config: ManUpConfig, @Optional() private storage: Storage) {}
 
     /**
      * True if there is an alert already displayed. Used to prevent multiple alerts 
