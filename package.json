@@ -3,7 +3,7 @@
   "version": "0.0.5",
   "description": "Mandatory Update for Ionic 2 apps",
   "main": "lib/main.js",
-  "typings": "lib/index",
+  "typings": "lib/main",
   "scripts": {
     "clean": "rm -rf lib",
     "mocha": "node_modules/.bin/mocha",
