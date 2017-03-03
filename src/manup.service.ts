@@ -10,6 +10,8 @@ import 'rxjs/add/operator/map';
 
 import * as semver from 'semver';
 
+const STORAGE_KEY='com.nextfaze.ionic-manup';
+
 /**
  * The types of alerts we may present
  */
@@ -53,9 +55,20 @@ export interface ManUpData {
 
 @Injectable()
 export class ManUpService {
+    /**
+     * A local reference to Ionic Native's AppVersion class.
+     * Stored locally so mocks can be injected in for testing.
+     * 
+     * @type {*}
+     * @memberOf ManUpService
+     */
     public AppVersion: any = AppVersion;
 
-    public constructor(private http: Http, private alert: AlertController, private platform: Platform, private config: ManUpConfig, @Optional() private storage: Storage) {}
+    public constructor(private http: Http, 
+                       private alert: AlertController, 
+                       private platform: Platform, 
+                       private config: ManUpConfig, 
+                       @Optional() private storage: Storage) {}
 
     /**
      * True if there is an alert already displayed. Used to prevent multiple alerts 
@@ -125,8 +138,47 @@ export class ManUpService {
     /**
      * Fetches the remote metadata and returns an observable with the json
      */
-    private metadata(): Observable<ManUpData> {
+    public metadata(): Observable<ManUpData> {
         return this.http.get(this.config.url).map(response => response.json());
+    }
+
+
+    /**
+     * Gets the version metadata from storage, if available.
+     * 
+     * @private
+     * @throws An error if the service was instantiated without a Storage component.
+     * @returns {Promise<any>} That resolves with the metadata
+     * 
+     * @memberOf ManUpService
+     */
+    private metadataFromStorage(): Promise<any> {
+        if (this.storage) {
+            return this.storage.get(STORAGE_KEY + '.manup').then((item:string) => JSON.parse(item));
+        }
+        else {
+            throw new Error('Storage not configured');
+        }
+    }
+
+    /**
+     * 
+     * Saves the metadata to storage.
+     * 
+     * @private
+     * @param {ManUpData} metadata The metadata to store
+     * @throws {Error} if storage if not configured
+     * @returns {Promise<any>} A promise that resolves when the save succeeds
+     * 
+     * @memberOf ManUpService
+     */
+    private saveMetadata(metadata: ManUpData): Promise<any> {
+        if (this.storage) {
+            return this.storage.set(STORAGE_KEY + '.manup', JSON.stringify(metadata));
+        }
+        else {
+            throw new Error('Storage not configured');
+        }
     }
 
     /**
