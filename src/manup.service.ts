@@ -1,3 +1,4 @@
+import { TranslateService } from 'ng2-translate';
 import { ManUpConfig } from './manup.config';
 import { AlertController, Platform } from 'ionic-angular';
 import { Http } from '@angular/http';
@@ -54,7 +55,7 @@ export interface ManUpData {
 export class ManUpService {
     public AppVersion: any = AppVersion;
 
-    public constructor(private http: Http, private alert: AlertController, private platform: Platform, private config: ManUpConfig) {}
+    public constructor(private http: Http, private alert: AlertController, private platform: Platform, private config: ManUpConfig, @Optional() private translate: TranslateService ) {}
 
     /**
      * True if there is an alert already displayed. Used to prevent multiple alerts 
@@ -221,7 +222,7 @@ export class ManUpService {
             return new Promise((resolve, reject) => {
                 let alert = this.alert.create({
                     enableBackdropDismiss: false,
-                    title: "Update Available",
+                    title: (this.translate) ? this.translate.instant('manup.optional.title', {app: name}) : "Update Available",
                     subTitle: `An update to ${name} is available. Would you like to update?`,
                     buttons: [
                         {
