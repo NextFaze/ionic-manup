@@ -1,0 +1,20 @@
+{
+    "manup": {
+        "mandatory": {
+            "title": "i18n Update Required",
+            "text": "An update to {app} is required to continue."
+        },
+        "optional": {
+            "title": "i18n Update Available",
+            "text": "An update to {app} is available."
+        },
+        "maintenance": {
+            "title": "i18n {app} Unavailable",
+            "text": "{app} is currently unavailable, please check back again later."
+        },
+        "buttons": {
+            "update": "Update",
+            "later": "Not Now"
+        }
+    }
+}
