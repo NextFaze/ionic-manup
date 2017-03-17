@@ -185,8 +185,8 @@ export class ManUpService {
             return new Promise((resolve, reject) => {
                 let alert = this.alert.create({
                     enableBackdropDismiss: false,
-                    title: "App Unavailable",
-                    subTitle: `${name} is currently unavailable, please check back again later.`,
+                    title: (this.translate) ? this.translate.instant('manup.maintenance.title', {app: name}) : `${name} Unavailable`,
+                    subTitle: (this.translate) ? this.translate.instant('manup.maintenance.text', {app: name}) : `${name} is currently unavailable. Please check back later`,
                 })
                 alert.present();
             });
@@ -203,11 +203,11 @@ export class ManUpService {
             return new Promise((resolve, reject) => {
                 let alert = this.alert.create({
                     enableBackdropDismiss: false,
-                    title: "Update Required",
-                    subTitle: `An update to ${name} is required to continue.`,
+                    title: (this.translate) ? this.translate.instant('manup.mandatory.title', {app: name}) : "Update Required",
+                    subTitle: (this.translate) ? this.translate.instant('manup.mandatory.text', {app: name}) : `An update to ${name} is required to continue.`,
                     buttons: [
                         {
-                            text: 'Update',
+                            text: (this.translate) ? this.translate.instant('manup.buttons.update') : 'Update',
                             handler: () => {
                                 new InAppBrowser(platformData.url, '_system');
                                 return false;
@@ -231,16 +231,16 @@ export class ManUpService {
                 let alert = this.alert.create({
                     enableBackdropDismiss: false,
                     title: (this.translate) ? this.translate.instant('manup.optional.title', {app: name}) : "Update Available",
-                    subTitle: `An update to ${name} is available. Would you like to update?`,
+                    subTitle: (this.translate) ? this.translate.instant('manup.optional.text', {app: name}) : `An update to ${name} is available. Would you like to update?`,
                     buttons: [
                         {
-                            text: 'Not Now',
+                            text: (this.translate) ? this.translate.instant('manup.buttons.later') : 'Not Now',
                             handler: () => {
                                 resolve();
                             }
                         },
                         {
-                            text: 'Update',
+                            text: (this.translate) ? this.translate.instant('manup.buttons.update') : 'Update',
                             handler: () => {
                                 new InAppBrowser(platformData.url, '_system');
                                 return false;
