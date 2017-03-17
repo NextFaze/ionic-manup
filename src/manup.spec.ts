@@ -17,7 +17,7 @@ describe('Manup Spec', function() {
                 enabled: false
             };
 
-            let manup = new ManUpService(null, null, null, null);
+            let manup = new ManUpService(null, null, null, null, null);
             manup.AppVersion = MockAppVersion;
 
             manup.evaluate(json).then(function(alert) {
@@ -33,7 +33,7 @@ describe('Manup Spec', function() {
                 enabled: true 
             };
 
-            let manup = new ManUpService(null, null, null, null);
+            let manup = new ManUpService(null, null, null, null, null);
             manup.AppVersion = MockAppVersion;
 
             manup.evaluate(json).then(function(alert) {
@@ -49,7 +49,7 @@ describe('Manup Spec', function() {
                 enabled: true 
             };
 
-            let manup = new ManUpService(null, null, null, null);
+            let manup = new ManUpService(null, null, null, null, null);
             manup.AppVersion = MockAppVersion;
 
             manup.evaluate(json).then(function(alert) {
@@ -65,7 +65,7 @@ describe('Manup Spec', function() {
                 enabled: true 
             };
 
-            let manup = new ManUpService(null, null, null, null);
+            let manup = new ManUpService(null, null, null, null, null);
             manup.AppVersion = MockAppVersion;
 
             manup.evaluate(json).then(function(alert) {
@@ -103,7 +103,7 @@ describe('Manup Spec', function() {
                     return v === 'ios'
                 }
             };
-            let manup = new ManUpService(null, null, <any> mockPlatform, null);
+            let manup = new ManUpService(null, null, <any> mockPlatform, null, null);
 
             let result = manup.getPlatformData(json);
             expect(result).toEqual(json.ios);
@@ -115,7 +115,7 @@ describe('Manup Spec', function() {
                     return v === 'android'
                 }
             };
-            let manup = new ManUpService(null, null, <any> mockPlatform, null);
+            let manup = new ManUpService(null, null, <any> mockPlatform, null, null);
 
             let result = manup.getPlatformData(json);
             expect(result).toEqual(json.android);
@@ -127,7 +127,7 @@ describe('Manup Spec', function() {
                     return v === 'windows'
                 }
             };
-            let manup = new ManUpService(null, null, <any> mockPlatform, null);
+            let manup = new ManUpService(null, null, <any> mockPlatform, null, null);
 
             let result = manup.getPlatformData(json);
             expect(result).toEqual(json.windows);
@@ -139,7 +139,7 @@ describe('Manup Spec', function() {
                     return false;
                 }
             };
-            let manup = new ManUpService(null, null, <any> mockPlatform, null);
+            let manup = new ManUpService(null, null, <any> mockPlatform, null, null);
 
             expect( () => {manup.getPlatformData(json)}).toThrow();
         })

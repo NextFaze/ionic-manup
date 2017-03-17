@@ -1,9 +1,11 @@
+import { TranslateService } from 'ng2-translate';
 import { ManUpConfig } from './manup.config';
 import { AlertController, Platform } from 'ionic-angular';
 import { Http } from '@angular/http';
 import { Injectable, Optional } from '@angular/core';
 import { AppVersion, InAppBrowser } from 'ionic-native';
 import { Observable } from 'rxjs';
+import { i18n } from './i18n';
 
 import 'rxjs/add/operator/map';
 
@@ -54,7 +56,14 @@ export interface ManUpData {
 export class ManUpService {
     public AppVersion: any = AppVersion;
 
-    public constructor(private http: Http, private alert: AlertController, private platform: Platform, private config: ManUpConfig) {}
+    public constructor(private http: Http, private alert: AlertController, private platform: Platform, private config: ManUpConfig, @Optional() private translate: TranslateService ) {
+        // load the translations unless we've been told not to
+        if (this.translate && !this.config.externalTranslations) {
+            for (let lang of i18n) {
+                this.translate.setTranslation(lang.lang, lang.translations, true);
+            }
+        }
+    }
 
     /**
      * True if there is an alert already displayed. Used to prevent multiple alerts 
@@ -176,8 +185,8 @@ export class ManUpService {
             return new Promise((resolve, reject) => {
                 let alert = this.alert.create({
                     enableBackdropDismiss: false,
-                    title: "App Unavailable",
-                    subTitle: `${name} is currently unavailable, please check back again later.`,
+                    title: (this.translate) ? this.translate.instant('manup.maintenance.title', {app: name}) : `${name} Unavailable`,
+                    subTitle: (this.translate) ? this.translate.instant('manup.maintenance.text', {app: name}) : `${name} is currently unavailable. Please check back later`,
                 })
                 alert.present();
             });
@@ -194,11 +203,11 @@ export class ManUpService {
             return new Promise((resolve, reject) => {
                 let alert = this.alert.create({
                     enableBackdropDismiss: false,
-                    title: "Update Required",
-                    subTitle: `An update to ${name} is required to continue.`,
+                    title: (this.translate) ? this.translate.instant('manup.mandatory.title', {app: name}) : "Update Required",
+                    subTitle: (this.translate) ? this.translate.instant('manup.mandatory.text', {app: name}) : `An update to ${name} is required to continue.`,
                     buttons: [
                         {
-                            text: 'Update',
+                            text: (this.translate) ? this.translate.instant('manup.buttons.update') : 'Update',
                             handler: () => {
                                 new InAppBrowser(platformData.url, '_system');
                                 return false;
@@ -221,17 +230,17 @@ export class ManUpService {
             return new Promise((resolve, reject) => {
                 let alert = this.alert.create({
                     enableBackdropDismiss: false,
-                    title: "Update Available",
-                    subTitle: `An update to ${name} is available. Would you like to update?`,
+                    title: (this.translate) ? this.translate.instant('manup.optional.title', {app: name}) : "Update Available",
+                    subTitle: (this.translate) ? this.translate.instant('manup.optional.text', {app: name}) : `An update to ${name} is available. Would you like to update?`,
                     buttons: [
                         {
-                            text: 'Not Now',
+                            text: (this.translate) ? this.translate.instant('manup.buttons.later') : 'Not Now',
                             handler: () => {
                                 resolve();
                             }
                         },
                         {
-                            text: 'Update',
+                            text: (this.translate) ? this.translate.instant('manup.buttons.update') : 'Update',
                             handler: () => {
                                 new InAppBrowser(platformData.url, '_system');
                                 return false;
