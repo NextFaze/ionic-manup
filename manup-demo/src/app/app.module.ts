@@ -24,7 +24,7 @@ export function translateLoader(http: Http) {
   ],
   imports: [
     IonicModule.forRoot(MyApp),
-    ManUpModule.forRoot({url: 'https://raw.githubusercontent.com/NextFaze/ionic-manup/master/manup-demo/manup.json'}),
+    ManUpModule.forRoot({url: 'https://raw.githubusercontent.com/NextFaze/ionic-manup/master/manup-demo/manup.json', externalTranslations: true}),
     TranslateModule.forRoot({
       provide: TranslateLoader,
       useFactory: (translateLoader),
