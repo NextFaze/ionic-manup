@@ -124,6 +124,72 @@ export class MyApp {
 }
 ```
 
+## Internationalisation Support
+
+The service uses [ng2-translate](https://www.npmjs.com/package/ng2-translate) to support languages other than English. This package is the way [recommended](https://ionicframework.com/docs/v2/resources/ng2-translate/) by the Ionic developers.
+
+### With Built in translations
+
+To make life easy for app developers, the service includes its own translation strings. All you need to do is add `ng2-translate` to your Ionic app and set the active language.
+
+Languages supported are currently limited to English and a Google Translated Spanish. We would love pull requests for new languages.
+
+#### Boostrap ng2-translate with your app!
+
+```ts
+    import { ManUpModule } from 'ionic-manup';
+    import { TranslateModule } from 'ng2-translate';
+
+    // in your module's import array
+    TranslateModule.forRoot(),
+    ManUpModule.forRoot({url: 'https://example.com/manup.json'})
+```
+
+
+### With your own strings
+
+If you want to further customise the messages, you can provide your own translations for the ManUp strings. _This is the only way we will be supporting customisation of the messages_.
+
+#### Setup your language files
+
+Follow the instructions for setting up `ng2-translate` with your Ionic 2 app, and add the following tree to your language files:
+
+
+```json
+ {
+   ...
+
+    "manup": {
+        "mandatory": {
+            "title": "i18n Update Required",
+            "text": "An update to {{app}} is required to continue."
+        },
+        "optional": {
+            "title": "i18n Update Available",
+            "text": "An update to {{app}} is available. Would you like to update?"
+        },
+        "maintenance": {
+            "title": "i18n {{app}} Unavailable",
+            "text": "{{app}} is currently unavailable, please check back again later."
+        },
+        "buttons": {
+            "update": "Update",
+            "later": "Not Now"
+        }
+    }
+ }
+```
+
+#### Tell ManUp to use external translations
+
+You need to tell ManUp to use external translations. Modify your Bootstrap like this:
+
+```ts
+    import { ManUpModule } from 'ionic-manup';
+
+    // in your module's import array
+    ManUpModule.forRoot({url: 'https://example.com/manup.json', externalTranslations: true})
+```
 
 ## Demonstration App
 
