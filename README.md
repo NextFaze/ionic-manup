@@ -145,6 +145,7 @@ Languages supported are currently limited to English and a Google Translated Spa
     ManUpModule.forRoot({url: 'https://example.com/manup.json'})
 ```
 
+Note: This is an absolute bare minimum example of loading the module. Follow the instructions linked to above for how to use `ng2-translate` in your app.
 
 ### With your own strings
 
