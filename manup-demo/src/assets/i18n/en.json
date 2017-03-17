@@ -6,7 +6,7 @@
         },
         "optional": {
             "title": "i18n Update Available",
-            "text": "An update to {{app}} is available."
+            "text": "An update to {{app}} is available. Would you like to update?"
         },
         "maintenance": {
             "title": "i18n {{app}} Unavailable",
