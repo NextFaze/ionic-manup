@@ -14,7 +14,7 @@ export class MyApp {
   rootPage = TabsPage;
 
   constructor(platform: Platform, private manup: ManUpService, private translate: TranslateService) {
-    translate.setDefaultLang('en');
+    translate.setDefaultLang('es');
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
