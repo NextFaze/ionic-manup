@@ -5,6 +5,7 @@ import { Http } from '@angular/http';
 import { Injectable, Optional } from '@angular/core';
 import { AppVersion, InAppBrowser } from 'ionic-native';
 import { Observable } from 'rxjs';
+import { i18n } from './i18n';
 
 import 'rxjs/add/operator/map';
 
@@ -55,7 +56,14 @@ export interface ManUpData {
 export class ManUpService {
     public AppVersion: any = AppVersion;
 
-    public constructor(private http: Http, private alert: AlertController, private platform: Platform, private config: ManUpConfig, @Optional() private translate: TranslateService ) {}
+    public constructor(private http: Http, private alert: AlertController, private platform: Platform, private config: ManUpConfig, @Optional() private translate: TranslateService ) {
+        // load the translations unless we've been told not to
+        if (this.translate && !this.config.externalTranslations) {
+            for (let lang of i18n) {
+                this.translate.setTranslation(lang.lang, lang.translations, true);
+            }
+        }
+    }
 
     /**
      * True if there is an alert already displayed. Used to prevent multiple alerts 
