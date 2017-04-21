@@ -10,6 +10,7 @@ import { Storage } from '@ionic/storage';
 import { i18n } from './i18n';
 
 import 'rxjs/add/operator/map';
+import 'rxjs/add/observable/fromPromise';
 
 import * as semver from 'semver';
 
@@ -103,7 +104,6 @@ export class ManUpService {
         if (!this.inProgress) {
             this.inProgress = true;
             this.currentPromise = new Promise( (resolve, reject) => {
-                console.log('waiting for platform');
                 this.platform.ready()
                 .then( () => {
                     this.metadata()
@@ -164,9 +164,9 @@ export class ManUpService {
      * 
      * @memberOf ManUpService
      */
-    private metadataFromStorage(): Promise<any> {
+    private metadataFromStorage(): Observable<ManUpData> {
         if (this.storage) {
-            return this.storage.get(STORAGE_KEY + '.manup').then((item:string) => JSON.parse(item));
+            return Observable.fromPromise((<Promise<string>> this.storage.get('asdf'))).map(v=> JSON.parse(v))
         }
         else {
             throw new Error('Storage not configured');
