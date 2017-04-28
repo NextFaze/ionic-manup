@@ -38,7 +38,7 @@
     "@angular/platform-browser-dynamic": "^2.2.1",
     "@angular/platform-server": "^2.2.1",
     "@ionic/storage": "^1.1.9",
-    "@types/jasmine": "^2.5.41",
+    "@types/jasmine": "^2.5.47",
     "@types/node": "^7.0.5",
     "@types/semver": "^5.3.30",
     "angular-cli": "^1.0.0-beta.28.3",
@@ -66,10 +66,10 @@
     "zone.js": "^0.6.26"
   },
   "peerDependencies": {
-    "@angular/common": "^2.0.0",
-    "@angular/core": "^2.0.0",
-    "rxjs": "^5.0.0-beta.12",
-    "zone.js": "^0.6.26"
+    "@angular/common": ">=2.0.0",
+    "@angular/core": ">=2.0.0",
+    "rxjs": ">=5.0.0-beta.12",
+    "zone.js": ">=0.6.26"
   },
   "dependencies": {
     "semver": "^5.3.0"
