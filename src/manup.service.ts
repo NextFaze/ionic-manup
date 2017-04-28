@@ -52,9 +52,9 @@ export interface PlatformData {
  * What the metadata object should look like
  */
 export interface ManUpData {
-    ios: PlatformData;
-    android: PlatformData;
-    windows: PlatformData;
+    ios?: PlatformData;
+    android?: PlatformData;
+    windows?: PlatformData;
 }
 
 @Injectable()
