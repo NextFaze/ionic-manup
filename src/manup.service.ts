@@ -117,7 +117,8 @@ export class ManUpService {
                                 default:
                                     return this.presentAlert(alert, metadata);
                             }
-                        })
+                        },
+                        error => resolve());
                     });
                 })
             });
