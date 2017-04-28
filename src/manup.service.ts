@@ -68,10 +68,10 @@ export class ManUpService {
      */
     public AppVersion: any = AppVersion;
 
-    public constructor(private http: Http, 
+    public constructor(private config: ManUpConfig, 
+                       private http: Http, 
                        private alert: AlertController, 
                        private platform: Platform, 
-                       private config: ManUpConfig, 
                        @Optional() private translate: TranslateService,
                        @Optional() private storage: Storage) {
 
@@ -151,7 +151,8 @@ export class ManUpService {
      * Fetches the remote metadata and returns an observable with the json
      */
     public metadata(): Observable<ManUpData> {
-        return this.http.get(this.config.url).map(response => response.json())
+        return this.http.get(this.config.url).map(response => response.json());
+        /*
         .map(response => {
             if (this.storage) {
                 return this.saveMetadata(response)
@@ -164,6 +165,7 @@ export class ManUpService {
             }
             return err;
         });
+        */
     }
 
 
@@ -176,9 +178,9 @@ export class ManUpService {
      * 
      * @memberOf ManUpService
      */
-    private metadataFromStorage(): Observable<ManUpData> {
+    metadataFromStorage(): Observable<ManUpData> {
         if (this.storage) {
-            return Observable.fromPromise((<Promise<string>> this.storage.get('asdf'))).map(v=> JSON.parse(v))
+            return Observable.fromPromise((<Promise<string>> this.storage.get(STORAGE_KEY + '.manup'))).map(v=> JSON.parse(v));
         }
         else {
             throw new Error('Storage not configured');
@@ -196,7 +198,7 @@ export class ManUpService {
      * 
      * @memberOf ManUpService
      */
-    private saveMetadata(metadata: ManUpData): Promise<any> {
+    public saveMetadata(metadata: ManUpData): Promise<any> {
         if (this.storage) {
             return this.storage.set(STORAGE_KEY + '.manup', JSON.stringify(metadata));
         }

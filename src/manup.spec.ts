@@ -1,4 +1,9 @@
+import { error } from 'util';
+import { Observable } from 'rxjs/Rx';
 import { AlertType, ManUpService } from './manup.service';
+import { ManUpConfig} from './manup.config';
+
+import 'rxjs/add/observable/of';
 
 class MockAppVersion {
     public static getVersionNumber() {
@@ -75,6 +80,131 @@ describe('Manup Spec', function() {
         });
     });
 
+    describe('metadata', function() {
+
+        let mockHttp = {
+            get: function(url: string):Observable<Object> {
+                return Observable.of({
+                    json: function(): Object {
+                        return {
+                            ios: {
+                                minimum: "1.0.0",
+                                latest: "2.4.5",
+                                enabled: true,
+                                url: "http://example.com" 
+                            },
+                            android: {
+                                minimum: "4.0.1",
+                                latest: "6.2.1",
+                                enabled: true,
+                                url: "http://example.com" 
+                            },
+                            windows: {
+                                minimum: "1.0.0",
+                                latest: "1.0.1",
+                                enabled: false,
+                                url: "http://example.com" 
+                            },
+                        }
+                    }
+                });
+            }
+        };
+
+        let config: ManUpConfig = {
+            url: 'test.example.com'
+        }
+
+        it('Should make an http request', function(done) {
+            spyOn(mockHttp, 'get').and.callThrough();
+            let manup = new ManUpService(config, <any> mockHttp, null, null, null,null);
+            manup.metadata().subscribe(data => {
+                expect(mockHttp.get).toHaveBeenCalled();
+                done();
+            })
+        })
+        it('Should return json', function(done) {
+            let manup = new ManUpService(config, <any> mockHttp, null, null, null,null);
+            manup.metadata().subscribe(data => {
+                expect(data.ios).toBeDefined();
+                expect(data.android).toBeDefined();
+                expect(data.windows).toBeDefined();
+                done();
+            })
+        })
+    })
+
+    describe('metadataFromStorage', function() {
+
+        it('Should return data from storage, if it exists', done => {
+            let metadata = {ios: {minimum: '1.0.0', latest: '2.0.0', enabled: true, url: 'test.example.com'}};
+            let mockStorage = {
+                get(key: string) {
+                    return Promise.resolve(JSON.stringify(metadata));
+                }
+            }
+            spyOn(mockStorage, 'get').and.callThrough();
+            let manup = new ManUpService(null, null, null, null, null, <any> mockStorage);
+            manup.metadataFromStorage()
+            .subscribe( (data) => {
+                expect(mockStorage.get).toHaveBeenCalledWith('com.nextfaze.ionic-manup.manup');
+                expect(data).toEqual(metadata);
+                done();
+            })
+        })
+
+        it('Should error if data is not stored ', function(done) {
+            let mockStorage = {
+                get(key: string) {
+                    return Promise.reject(new Error('not found'));
+                }
+            }
+            spyOn(mockStorage, 'get').and.callThrough();
+            let manup = new ManUpService(null, null, null, null, null, <any> mockStorage);
+            manup.metadataFromStorage()
+            .subscribe( 
+                data => {
+                    expect(data).toBe(false);
+                },
+                error => {
+                    expect(error).toBeDefined();
+                    done();
+                }
+            )
+        })
+        it('Should throw an exception if storage not configured', done => {
+            let manup = new ManUpService(null, null, null, null, null, null);
+            expect(() => {manup.metadataFromStorage()}).toThrowError();
+            done();
+        })
+    });
+
+    describe('saveMetaData', function() {
+        let mockStorage = {
+            set(key: string, value: string) {
+                return Promise.resolve();
+            }
+        }
+
+        it('Should save the item if storage configured', done => {
+            spyOn(mockStorage, 'set').and.callThrough();
+            let manup = new ManUpService(null, null, null, null, null, <any> mockStorage);
+            let metadata = {ios: {minimum: '1.0.0', latest: '2.0.0', enabled: true, url: 'test.example.com'}};
+            manup.saveMetadata(metadata)
+            .then( () => {
+                expect(mockStorage.set).toHaveBeenCalledWith('com.nextfaze.ionic-manup.manup', JSON.stringify(metadata))
+                done();
+            })
+        });
+
+        it('Should throw an exception if storage not configured', done => {
+            let metadata = {ios: {minimum: '1.0.0', latest: '2.0.0', enabled: true, url: 'test.example.com'}};
+            let manup = new ManUpService(null, null, null, null, null, null);
+            expect(() => {manup.saveMetadata(metadata)}).toThrowError();
+            done();
+        })
+    })
+
     describe('getPlatformData', function() {
         let json = {
             ios: {
@@ -103,7 +233,7 @@ describe('Manup Spec', function() {
                     return v === 'ios'
                 }
             };
-            let manup = new ManUpService(null, null, <any> mockPlatform, null, null,null);
+            let manup = new ManUpService(null, null, null, <any> mockPlatform, null,null);
 
             let result = manup.getPlatformData(json);
             expect(result).toEqual(json.ios);
@@ -115,7 +245,7 @@ describe('Manup Spec', function() {
                     return v === 'android'
                 }
             };
-            let manup = new ManUpService(null, null, <any> mockPlatform, null, null,null);
+            let manup = new ManUpService(null, null, null, <any> mockPlatform, null,null);
 
             let result = manup.getPlatformData(json);
             expect(result).toEqual(json.android);
@@ -127,7 +257,7 @@ describe('Manup Spec', function() {
                     return v === 'windows'
                 }
             };
-            let manup = new ManUpService(null, null, <any> mockPlatform, null, null,null);
+            let manup = new ManUpService(null, null, null, <any> mockPlatform, null,null);
 
             let result = manup.getPlatformData(json);
             expect(result).toEqual(json.windows);
@@ -139,7 +269,7 @@ describe('Manup Spec', function() {
                     return false;
                 }
             };
-            let manup = new ManUpService(null, null, <any> mockPlatform, null, null,null);
+            let manup = new ManUpService(null, null, null, <any> mockPlatform, null,null);
 
             expect( () => {manup.getPlatformData(json)}).toThrow();
         })
