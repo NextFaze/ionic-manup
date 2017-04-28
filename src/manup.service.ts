@@ -5,11 +5,16 @@ import { Http } from '@angular/http';
 import { Injectable, Optional } from '@angular/core';
 import { AppVersion, InAppBrowser } from 'ionic-native';
 import { Observable } from 'rxjs';
+import { Storage } from '@ionic/storage';
+
 import { i18n } from './i18n';
 
 import 'rxjs/add/operator/map';
+import 'rxjs/add/observable/fromPromise';
 
 import * as semver from 'semver';
+
+const STORAGE_KEY='com.nextfaze.ionic-manup';
 
 /**
  * The types of alerts we may present
@@ -47,16 +52,29 @@ export interface PlatformData {
  * What the metadata object should look like
  */
 export interface ManUpData {
-    ios: PlatformData;
-    android: PlatformData;
-    windows: PlatformData;
+    ios?: PlatformData;
+    android?: PlatformData;
+    windows?: PlatformData;
 }
 
 @Injectable()
 export class ManUpService {
+    /**
+     * A local reference to Ionic Native's AppVersion class.
+     * Stored locally so mocks can be injected in for testing.
+     * 
+     * @type {*}
+     * @memberOf ManUpService
+     */
     public AppVersion: any = AppVersion;
 
-    public constructor(private http: Http, private alert: AlertController, private platform: Platform, private config: ManUpConfig, @Optional() private translate: TranslateService ) {
+    public constructor(private config: ManUpConfig, 
+                       private http: Http, 
+                       private alert: AlertController, 
+                       private platform: Platform, 
+                       @Optional() private translate: TranslateService,
+                       @Optional() private storage: Storage) {
+
         // load the translations unless we've been told not to
         if (this.translate && !this.config.externalTranslations) {
             for (let lang of i18n) {
@@ -86,7 +104,6 @@ export class ManUpService {
         if (!this.inProgress) {
             this.inProgress = true;
             this.currentPromise = new Promise( (resolve, reject) => {
-                console.log('waiting for platform');
                 this.platform.ready()
                 .then( () => {
                     this.metadata()
@@ -100,7 +117,8 @@ export class ManUpService {
                                 default:
                                     return this.presentAlert(alert, metadata);
                             }
-                        })
+                        },
+                        error => resolve());
                     });
                 })
             });
@@ -133,8 +151,59 @@ export class ManUpService {
     /**
      * Fetches the remote metadata and returns an observable with the json
      */
-    private metadata(): Observable<ManUpData> {
-        return this.http.get(this.config.url).map(response => response.json());
+    public metadata(): Observable<ManUpData> {
+        return this.http.get(this.config.url).map(response => response.json())
+        .map(response => {
+            if (this.storage) {
+                this.saveMetadata(response).catch( () => {});
+            }
+            return response;
+        })
+        .catch(err => {
+            if (this.storage) {
+                return this.metadataFromStorage();
+            }
+            return err;
+        });
+    }
+
+
+    /**
+     * Gets the version metadata from storage, if available.
+     * 
+     * @private
+     * @throws An error if the service was instantiated without a Storage component.
+     * @returns {Promise<any>} That resolves with the metadata
+     * 
+     * @memberOf ManUpService
+     */
+    metadataFromStorage(): Observable<ManUpData> {
+        if (this.storage) {
+            return Observable.fromPromise((<Promise<string>> this.storage.get(STORAGE_KEY + '.manup'))).map(v=> JSON.parse(v));
+        }
+        else {
+            throw new Error('Storage not configured');
+        }
+    }
+
+    /**
+     * 
+     * Saves the metadata to storage.
+     * 
+     * @private
+     * @param {ManUpData} metadata The metadata to store
+     * @throws {Error} if storage if not configured
+     * @returns {Promise<any>} A promise that resolves when the save succeeds
+     * 
+     * @memberOf ManUpService
+     */
+    public saveMetadata(metadata: ManUpData): Promise<any> {
+        if (this.storage) {
+            return this.storage.set(STORAGE_KEY + '.manup', JSON.stringify(metadata));
+        }
+        else {
+            throw new Error('Storage not configured');
+        }
     }
 
     /**
