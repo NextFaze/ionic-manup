@@ -152,11 +152,10 @@ export class ManUpService {
      * Fetches the remote metadata and returns an observable with the json
      */
     public metadata(): Observable<ManUpData> {
-        return this.http.get(this.config.url).map(response => response.json());
-        /*
+        return this.http.get(this.config.url).map(response => response.json())
         .map(response => {
             if (this.storage) {
-                return this.saveMetadata(response)
+                this.saveMetadata(response).catch( () => {});
             }
             return response;
         })
@@ -166,7 +165,6 @@ export class ManUpService {
             }
             return err;
         });
-        */
     }
 
 

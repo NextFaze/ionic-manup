@@ -82,56 +82,145 @@ describe('Manup Spec', function() {
 
     describe('metadata', function() {
 
-        let mockHttp = {
-            get: function(url: string):Observable<Object> {
-                return Observable.of({
-                    json: function(): Object {
-                        return {
+        let config: ManUpConfig = {
+            url: 'test.example.com'
+        }
+        
+        describe('Http route, no storage configured', () => {
+            let mockHttp = {
+                get: function(url: string):Observable<Object> {
+                    return Observable.of({
+                        json: function(): Object {
+                            return {
+                                ios: {
+                                    minimum: "1.0.0",
+                                    latest: "2.4.5",
+                                    enabled: true,
+                                    url: "http://http.example.com" 
+                                }
+                            }
+                        }
+                    });
+                }
+            };
+            it('Should make an http request', function(done) {
+                spyOn(mockHttp, 'get').and.callThrough();
+                let manup = new ManUpService(config, <any> mockHttp, null, null, null,null);
+                manup.metadata().subscribe(data => {
+                    expect(mockHttp.get).toHaveBeenCalled();
+                    done();
+                })
+            })
+            it('Should return json', function(done) {
+                let manup = new ManUpService(config, <any> mockHttp, null, null, null,null);
+                manup.metadata().subscribe(data => {
+                    expect(data.ios).toBeDefined();
+                    expect(data.ios.url).toBe('http://http.example.com');
+                    done();
+                })
+            })
+        });
+
+        describe('Http route, with storage', () => {
+            let mockHttp = {
+                get: function(url: string):Observable<Object> {
+                    return Observable.of({
+                        json: function(): Object {
+                            return {
+                                ios: {
+                                    minimum: "1.0.0",
+                                    latest: "2.4.5",
+                                    enabled: true,
+                                    url: "http://http.example.com" 
+                                }
+                            }
+                        }
+                    });
+                }
+            };
+            let mockStorage = {
+                set(key: string, value: string) { 
+                    return Promise.resolve();
+                }
+            }
+            let response: any;
+            let manup: any;
+
+            beforeAll( done => {
+                manup = new ManUpService(config, <any> mockHttp, null, null, null, <any> mockStorage);
+                spyOn(mockHttp, 'get').and.callThrough();
+                spyOn(manup, 'saveMetadata').and.callThrough();
+                manup.metadata().subscribe( (data:any) => {
+                    response = data;
+                    done();
+                });
+            })
+            it('Should make an http request', () => {
+                expect(mockHttp.get).toHaveBeenCalled();
+            })
+            it('Should store the result to storage', () => {
+                expect(manup.saveMetadata).toHaveBeenCalled();
+            })
+            it('Should return json', () => {
+                expect(response.ios).toBeDefined();
+                expect(response.ios.url).toBe('http://http.example.com');
+            })
+        });
+
+        describe('Fallback to storage', () => {
+            let mockHttp: any;
+            let mockStorage: any;
+
+            beforeEach( () => {
+                mockHttp = {
+                    get: function(url: string):Observable<Object> {
+                        return Observable.throw(new Error('HTTP Failed'));
+                    }
+                };
+                mockStorage = {
+                    get(key: string) {
+                        return Promise.resolve(JSON.stringify({
                             ios: {
                                 minimum: "1.0.0",
                                 latest: "2.4.5",
                                 enabled: true,
-                                url: "http://example.com" 
-                            },
-                            android: {
-                                minimum: "4.0.1",
-                                latest: "6.2.1",
-                                enabled: true,
-                                url: "http://example.com" 
-                            },
-                            windows: {
-                                minimum: "1.0.0",
-                                latest: "1.0.1",
-                                enabled: false,
-                                url: "http://example.com" 
-                            },
-                        }
+                                url: "http://storage.example.com" 
+                            }
+                        }));
+                    },
+                    set(key: string, value: string) { 
+                        return Promise.resolve();
                     }
-                });
-            }
-        };
-
-        let config: ManUpConfig = {
-            url: 'test.example.com'
-        }
-
-        it('Should make an http request', function(done) {
-            spyOn(mockHttp, 'get').and.callThrough();
-            let manup = new ManUpService(config, <any> mockHttp, null, null, null,null);
-            manup.metadata().subscribe(data => {
-                expect(mockHttp.get).toHaveBeenCalled();
-                done();
+                }
+                spyOn(mockHttp, 'get').and.callThrough();
+                spyOn(mockStorage, 'get').and.callThrough();
+                spyOn(mockStorage, 'set').and.callThrough();
             })
-        })
-        it('Should return json', function(done) {
-            let manup = new ManUpService(config, <any> mockHttp, null, null, null,null);
-            manup.metadata().subscribe(data => {
-                expect(data.ios).toBeDefined();
-                expect(data.android).toBeDefined();
-                expect(data.windows).toBeDefined();
-                done();
+
+            it('Should make an http request', function(done) {
+                let manup = new ManUpService(config, <any> mockHttp, null, null, null, <any> mockStorage);
+                manup.metadata().subscribe(data => {
+                    expect(mockHttp.get).toHaveBeenCalled();
+                    done();
+                })
             })
-        })
+            it('Should fallback to storage', function(done) {
+                let manup = new ManUpService(config, <any> mockHttp, null, null, null, <any> mockStorage);
+                manup.metadata().subscribe(data => {
+                    expect(mockStorage.get).toHaveBeenCalled();
+                    done();
+                })
+            })
+            it('Should return json', function(done) {
+                let manup = new ManUpService(config, <any> mockHttp, null, null, null, <any> mockStorage);
+                manup.metadata().subscribe(data => {
+                    expect(data.ios).toBeDefined();
+                    expect(data.ios.url).toBe('http://storage.example.com');
+                    done();
+                })
+            })
+        });
+        
     })
 
     describe('metadataFromStorage', function() {
