@@ -1,4 +1,4 @@
-import { TranslateService } from 'ng2-translate';
+import { TranslateService } from '@ngx-translate/core';
 import { ManUpConfig } from './manup.config';
 import { AlertController, Platform } from 'ionic-angular';
 import { Http } from '@angular/http';
