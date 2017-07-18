@@ -1,6 +1,6 @@
 {
   "name": "ionic-manup",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Mandatory Update for Ionic 2 apps",
   "main": "lib/main.js",
   "typings": "lib/main",
