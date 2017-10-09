@@ -1,18 +1,22 @@
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/map';
 
-import { Injectable, Optional } from '@angular/core';
+import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
 import { Http } from '@angular/http';
 import { AppVersion } from '@ionic-native/app-version';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Storage } from '@ionic/storage';
-import { TranslateService } from '@ngx-translate/core';
 import { AlertController, Platform } from 'ionic-angular';
 import { Observable } from 'rxjs';
 import * as semver from 'semver';
 
 import { i18n } from './i18n';
 import { ManUpConfig } from './manup.config';
+
+/**
+ * DI InjectionToken for optional ngx-translate
+ */
+export const TRANSLATE_SERVICE: any = new InjectionToken('manup:translate');
 
 const STORAGE_KEY = 'com.nextfaze.ionic-manup';
 
@@ -66,7 +70,9 @@ export class ManUpService {
     private platform: Platform,
     private iab: InAppBrowser,
     private AppVersion: AppVersion,
-    @Optional() private translate: TranslateService,
+    @Optional()
+    @Inject(TRANSLATE_SERVICE)
+    private translate: any,
     @Optional() private storage: Storage
   ) {
     // load the translations unless we've been told not to
@@ -121,10 +127,10 @@ export class ManUpService {
   }
 
   /**
-     * Evaluates what kind of update is required, if any.
-     * 
-     * Returns a promise that resolves with an alert type.
-     */
+   * Evaluates what kind of update is required, if any.
+   * 
+   * Returns a promise that resolves with an alert type.
+   */
   public evaluate(metadata: PlatformData): Promise<AlertType> {
     if (!metadata.enabled) {
       return Promise.resolve(AlertType.MAINTENANCE);
@@ -140,8 +146,8 @@ export class ManUpService {
   }
 
   /**
-     * Fetches the remote metadata and returns an observable with the json
-     */
+   * Fetches the remote metadata and returns an observable with the json
+   */
   public metadata(): Observable<ManUpData> {
     return this.http
       .get(this.config.url)
