@@ -1,46 +1,38 @@
-import { NgModule, ErrorHandler } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { Http } from '@angular/http';
-import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
-import { MyApp } from './app.component';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
+import { ManUpModule, ManUpService } from 'ionic-manup';
+
 import { AboutPage } from '../pages/about/about';
 import { ContactPage } from '../pages/contact/contact';
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
-import { ManUpModule, ManUpService } from 'ionic-manup';
-import { TranslateModule, TranslateLoader, TranslateStaticLoader } from 'ng2-translate';
-
+import { MyApp } from './app.component';
 
 export function translateLoader(http: Http) {
-  return new TranslateStaticLoader(http, 'assets/i18n', '.json');
+  return new TranslateHttpLoader(http, 'assets/i18n', '.json');
 }
 
 @NgModule({
-  declarations: [
-    MyApp,
-    AboutPage,
-    ContactPage,
-    HomePage,
-    TabsPage
-  ],
+  declarations: [MyApp, AboutPage, ContactPage, HomePage, TabsPage],
   imports: [
     IonicModule.forRoot(MyApp),
-    ManUpModule.forRoot({url: 'https://raw.githubusercontent.com/NextFaze/ionic-manup/master/manup-demo/manup.json', externalTranslations: true}),
+    ManUpModule.forRoot({
+      url: 'https://raw.githubusercontent.com/NextFaze/ionic-manup/master/manup-demo/manup.json',
+      externalTranslations: true
+    }),
     TranslateModule.forRoot({
-      provide: TranslateLoader,
-      useFactory: (translateLoader),
-      deps: [Http]
+      loader: {
+        provide: TranslateLoader,
+        useFactory: translateLoader,
+        deps: [Http]
+      }
     })
   ],
   bootstrap: [IonicApp],
-  entryComponents: [
-    MyApp,
-    AboutPage,
-    ContactPage,
-    HomePage,
-    TabsPage
-  ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
-    ManUpService
-  ]
+  entryComponents: [MyApp, AboutPage, ContactPage, HomePage, TabsPage],
+  providers: [{ provide: ErrorHandler, useClass: IonicErrorHandler }, ManUpService]
 })
 export class AppModule {}
