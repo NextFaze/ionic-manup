@@ -6,10 +6,10 @@ import { AppVersion } from '@ionic-native/app-version';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
-import { ManUpModule, ManUpService } from 'ionic-manup';
+import { ManUpModule, ManUpService, TRANSLATE_SERVICE } from 'ionic-manup';
 
 import { HomePage } from '../pages/home/home';
 import { MyApp } from './app.component';
@@ -40,6 +40,7 @@ export function translateLoader(http: HttpClient) {
   providers: [
     AppVersion,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
+    { provide: TRANSLATE_SERVICE, useClass: TranslateService },
     ManUpService,
     SplashScreen,
     InAppBrowser,
