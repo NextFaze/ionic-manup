@@ -3,6 +3,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { TranslateService } from '@ngx-translate/core';
 import { Platform } from 'ionic-angular';
+import { ManUpService } from 'ionic-manup';
 
 import { HomePage } from '../pages/home/home';
 
@@ -16,8 +17,8 @@ export class MyApp {
     platform: Platform,
     statusBar: StatusBar,
     splashScreen: SplashScreen,
-    private manup: ManupService,
-    private translate: TranslateService
+    manup: ManUpService,
+    translate: TranslateService
   ) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
