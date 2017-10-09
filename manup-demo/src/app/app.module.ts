@@ -1,24 +1,21 @@
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ErrorHandler, NgModule } from '@angular/core';
-import { Http } from '@angular/http';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { ManUpModule, ManUpService } from 'ionic-manup';
 
-import { AboutPage } from '../pages/about/about';
-import { ContactPage } from '../pages/contact/contact';
 import { HomePage } from '../pages/home/home';
-import { TabsPage } from '../pages/tabs/tabs';
 import { MyApp } from './app.component';
 
-export function translateLoader(http: Http) {
+export function translateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n', '.json');
 }
-
 @NgModule({
-  declarations: [MyApp, AboutPage, ContactPage, HomePage, TabsPage],
+  declarations: [MyApp, HomePage],
   imports: [
     IonicModule.forRoot(MyApp),
+    HttpClientModule,
     ManUpModule.forRoot({
       url: 'https://raw.githubusercontent.com/NextFaze/ionic-manup/master/manup-demo/manup.json',
       externalTranslations: true
@@ -27,12 +24,12 @@ export function translateLoader(http: Http) {
       loader: {
         provide: TranslateLoader,
         useFactory: translateLoader,
-        deps: [Http]
+        deps: [HttpClient]
       }
     })
   ],
   bootstrap: [IonicApp],
-  entryComponents: [MyApp, AboutPage, ContactPage, HomePage, TabsPage],
-  providers: [{ provide: ErrorHandler, useClass: IonicErrorHandler }, ManUpService]
+  providers: [{ provide: ErrorHandler, useClass: IonicErrorHandler }, ManUpService],
+  entryComponents: [MyApp, HomePage]
 })
 export class AppModule {}

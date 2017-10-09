@@ -1,6 +1,8 @@
 {
   "name": "manup-demo",
   "app_id": "",
-  "v2": true,
-  "typescript": true
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
 }
