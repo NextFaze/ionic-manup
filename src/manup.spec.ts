@@ -22,8 +22,7 @@ describe('Manup Spec', function() {
         enabled: false
       };
 
-      let manup = new ManUpService(null, null, null, null, null, null, null);
-      manup.AppVersion = MockAppVersion;
+      let manup = new ManUpService(null, null, null, null, null, <any>MockAppVersion, null, null);
 
       manup.evaluate(json).then(function(alert) {
         expect(alert).toEqual(AlertType.MAINTENANCE);
@@ -38,8 +37,7 @@ describe('Manup Spec', function() {
         enabled: true
       };
 
-      let manup = new ManUpService(null, null, null, null, null, null, null);
-      manup.AppVersion = MockAppVersion;
+      let manup = new ManUpService(null, null, null, null, null, <any>MockAppVersion, null, null);
 
       manup.evaluate(json).then(function(alert) {
         expect(alert).toEqual(AlertType.MANDATORY);
@@ -54,8 +52,7 @@ describe('Manup Spec', function() {
         enabled: true
       };
 
-      let manup = new ManUpService(null, null, null, null, null, null, null);
-      manup.AppVersion = MockAppVersion;
+      let manup = new ManUpService(null, null, null, null, null, <any>MockAppVersion, null, null);
 
       manup.evaluate(json).then(function(alert) {
         expect(alert).toEqual(AlertType.OPTIONAL);
@@ -70,8 +67,7 @@ describe('Manup Spec', function() {
         enabled: true
       };
 
-      let manup = new ManUpService(null, null, null, null, null, null, null);
-      manup.AppVersion = MockAppVersion;
+      let manup = new ManUpService(null, null, null, null, null, <any>MockAppVersion, null, null);
 
       manup.evaluate(json).then(function(alert) {
         expect(alert).toEqual(AlertType.NOP);
@@ -104,14 +100,14 @@ describe('Manup Spec', function() {
       };
       it('Should make an http request', function(done) {
         spyOn(mockHttp, 'get').and.callThrough();
-        let manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null);
+        let manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null, null);
         manup.metadata().subscribe(data => {
           expect(mockHttp.get).toHaveBeenCalled();
           done();
         });
       });
       it('Should return json', function(done) {
-        let manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null);
+        let manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null, null);
         manup.metadata().subscribe(data => {
           expect(data.ios).toBeDefined();
           expect(data.ios.url).toBe('http://http.example.com');
@@ -146,7 +142,16 @@ describe('Manup Spec', function() {
       let manup: any;
 
       beforeAll(done => {
-        manup = new ManUpService(config, <any>mockHttp, null, null, null, null, <any>mockStorage);
+        manup = new ManUpService(
+          config,
+          <any>mockHttp,
+          null,
+          null,
+          null,
+          null,
+          null,
+          <any>mockStorage
+        );
         spyOn(mockHttp, 'get').and.callThrough();
         spyOn(manup, 'saveMetadata').and.callThrough();
         manup.metadata().subscribe((data: any) => {
@@ -206,6 +211,7 @@ describe('Manup Spec', function() {
           null,
           null,
           null,
+          null,
           <any>mockStorage
         );
         manup.metadata().subscribe(data => {
@@ -221,6 +227,7 @@ describe('Manup Spec', function() {
           null,
           null,
           null,
+          null,
           <any>mockStorage
         );
         manup.metadata().subscribe(data => {
@@ -232,6 +239,7 @@ describe('Manup Spec', function() {
         let manup = new ManUpService(
           config,
           <any>mockHttp,
+          null,
           null,
           null,
           null,
@@ -258,7 +266,7 @@ describe('Manup Spec', function() {
         }
       };
       spyOn(mockStorage, 'get').and.callThrough();
-      let manup = new ManUpService(null, null, null, null, null, null, <any>mockStorage);
+      let manup = new ManUpService(null, null, null, null, null, null, null, <any>mockStorage);
       manup.metadataFromStorage().subscribe(data => {
         expect(mockStorage.get).toHaveBeenCalledWith('com.nextfaze.ionic-manup.manup');
         expect(data).toEqual(metadata);
@@ -273,7 +281,7 @@ describe('Manup Spec', function() {
         }
       };
       spyOn(mockStorage, 'get').and.callThrough();
-      let manup = new ManUpService(null, null, null, null, null, null, <any>mockStorage);
+      let manup = new ManUpService(null, null, null, null, null, null, null, <any>mockStorage);
       manup.metadataFromStorage().subscribe(
         data => {
           expect(true).toBe(false);
@@ -285,7 +293,7 @@ describe('Manup Spec', function() {
       );
     });
     it('Should throw an exception if storage not configured', done => {
-      let manup = new ManUpService(null, null, null, null, null, null, null);
+      let manup = new ManUpService(null, null, null, null, null, null, null, null);
       expect(() => {
         manup.metadataFromStorage();
       }).toThrowError();
@@ -302,7 +310,7 @@ describe('Manup Spec', function() {
 
     it('Should save the item if storage configured', done => {
       spyOn(mockStorage, 'set').and.callThrough();
-      let manup = new ManUpService(null, null, null, null, null, null, <any>mockStorage);
+      let manup = new ManUpService(null, null, null, null, null, null, null, <any>mockStorage);
       let metadata = {
         ios: { minimum: '1.0.0', latest: '2.0.0', enabled: true, url: 'test.example.com' }
       };
@@ -319,7 +327,7 @@ describe('Manup Spec', function() {
       let metadata = {
         ios: { minimum: '1.0.0', latest: '2.0.0', enabled: true, url: 'test.example.com' }
       };
-      let manup = new ManUpService(null, null, null, null, null, null, null);
+      let manup = new ManUpService(null, null, null, null, null, null, null, null);
       expect(() => {
         manup.saveMetadata(metadata);
       }).toThrowError();
@@ -355,7 +363,7 @@ describe('Manup Spec', function() {
           return v === 'ios';
         }
       };
-      let manup = new ManUpService(null, null, null, <any>mockPlatform, null, null, null);
+      let manup = new ManUpService(null, null, null, <any>mockPlatform, null, null, null, null);
 
       let result = manup.getPlatformData(json);
       expect(result).toEqual(json.ios);
@@ -367,7 +375,7 @@ describe('Manup Spec', function() {
           return v === 'android';
         }
       };
-      let manup = new ManUpService(null, null, null, <any>mockPlatform, null, null, null);
+      let manup = new ManUpService(null, null, null, <any>mockPlatform, null, null, null, null);
 
       let result = manup.getPlatformData(json);
       expect(result).toEqual(json.android);
@@ -379,7 +387,7 @@ describe('Manup Spec', function() {
           return v === 'windows';
         }
       };
-      let manup = new ManUpService(null, null, null, <any>mockPlatform, null, null, null);
+      let manup = new ManUpService(null, null, null, <any>mockPlatform, null, null, null, null);
 
       let result = manup.getPlatformData(json);
       expect(result).toEqual(json.windows);
@@ -391,7 +399,7 @@ describe('Manup Spec', function() {
           return false;
         }
       };
-      let manup = new ManUpService(null, null, null, <any>mockPlatform, null, null, null);
+      let manup = new ManUpService(null, null, null, <any>mockPlatform, null, null, null, null);
 
       expect(() => {
         manup.getPlatformData(json);

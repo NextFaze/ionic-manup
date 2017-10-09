@@ -59,21 +59,13 @@ export interface ManUpData {
 
 @Injectable()
 export class ManUpService {
-  /**
-     * A local reference to Ionic Native's AppVersion class.
-     * Stored locally so mocks can be injected in for testing.
-     * 
-     * @type {*}
-     * @memberOf ManUpService
-     */
-  public AppVersion: any = AppVersion;
-
   public constructor(
     private config: ManUpConfig,
     private http: Http,
     private alert: AlertController,
     private platform: Platform,
     private iab: InAppBrowser,
+    private AppVersion: AppVersion,
     @Optional() private translate: TranslateService,
     @Optional() private storage: Storage
   ) {
