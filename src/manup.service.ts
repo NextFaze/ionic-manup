@@ -3,7 +3,8 @@ import { ManUpConfig } from './manup.config';
 import { AlertController, Platform } from 'ionic-angular';
 import { Http } from '@angular/http';
 import { Injectable, Optional } from '@angular/core';
-import { AppVersion, InAppBrowser } from 'ionic-native';
+import { AppVersion } from '@ionic-native/app-version';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Observable } from 'rxjs';
 import { Storage } from '@ionic/storage';
 
