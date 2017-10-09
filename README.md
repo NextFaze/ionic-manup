@@ -34,17 +34,19 @@ Mandatory Update (manup) works like this:
 
 ## Requirements
 
- * Ionic 2 
- * Angular 2.x
- * `ionic-native` (needed to get the app version and name) 
+ * Ionic >2 
+ * Angular >2
  * `@ionic/storage` (used for caching)
- * `cordova-plugin-app-version` to get the installed app name and version
+ * `@ionic-native/app-version` 
+ * `cordova-plugin-app-version`
+ * `@ionic-native/in-app-browser` 
  * `cordova-plugin-inappbrowser` to launch the link to the app/play store
+ * `@ngx-translate/core` Needed to handle translations (even if you don't use it in your app)
 
 In your ionic project root:
 
 ```sh
-npm install --save @ionic/storage ionic-native
+npm install --save @ionic/storage @ionic-native/app-version @ionic-native/in-app-browser
 ionic plugin add cordova-plugin-app-version
 ionic plugin add cordova-plugin-inappbrowser
 ```
