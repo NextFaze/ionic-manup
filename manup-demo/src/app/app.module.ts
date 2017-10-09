@@ -9,7 +9,7 @@ import { HomePage } from '../pages/home/home';
 import { MyApp } from './app.component';
 
 export function translateLoader(http: HttpClient) {
-  return new TranslateHttpLoader(http, 'assets/i18n', '.json');
+  return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }
 @NgModule({
   declarations: [MyApp, HomePage],
