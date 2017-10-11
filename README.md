@@ -1,4 +1,4 @@
-# Mandatory Update for Ionic 2
+# Mandatory Update for Ionic 2+
 
 [![Build
 Status](https://travis-ci.org/NextFaze/ionic-manup.svg?branch=master)](https://travis-ci.org/NextFaze/ionic-manup)
@@ -34,22 +34,27 @@ Mandatory Update (manup) works like this:
 
 ## Requirements
 
- * Ionic 2 
- * Angular 2.x
- * `ionic-native` (needed to get the app version and name) 
+ * Ionic >2 
+ * Angular >2
  * `@ionic/storage` (used for caching)
- * `cordova-plugin-app-version` to get the installed app name and version
+ * `@ionic-native/app-version` 
+ * `cordova-plugin-app-version`
+ * `@ionic-native/in-app-browser` 
  * `cordova-plugin-inappbrowser` to launch the link to the app/play store
+
 
 In your ionic project root:
 
 ```sh
-npm install --save @ionic/storage ionic-native
+npm install --save @ionic/storage @ionic-native/app-version @ionic-native/in-app-browser
 ionic plugin add cordova-plugin-app-version
 ionic plugin add cordova-plugin-inappbrowser
 ```
 
 Manup assumes you are using Semantic Versioning for your app.
+
+ ### Optional
+ * `@ngx-translate/core` Needed to handle translations
 
 ## Installation
 
@@ -126,26 +131,45 @@ export class MyApp {
 
 ## Internationalisation Support
 
-The service uses [ng2-translate](https://www.npmjs.com/package/ng2-translate) to support languages other than English. This package is the way [recommended](https://ionicframework.com/docs/v2/resources/ng2-translate/) by the Ionic developers.
+The service uses [ngx-translate](https://www.npmjs.com/package/ng2-translate) to support languages other than English. This package is the way [recommended](https://ionicframework.com/docs/v2/resources/ng2-translate/) by the Ionic developers.
 
 ### With Built in translations
 
-To make life easy for app developers, the service includes its own translation strings. All you need to do is add `ng2-translate` to your Ionic app and set the active language.
+To make life easy for app developers, the service includes its own translation strings. All you need to do is add `ngx-translate` to your Ionic app and set the active language. Due to the way AOT works, you also need to provide a `TRANSLATE_SERVICE` for ManUp to use.
 
 Languages supported are currently limited to English and a Google Translated Spanish. We would love pull requests for new languages.
 
-#### Boostrap ng2-translate with your app!
+#### Boostrap ngx-translate with your app!
 
 ```ts
-    import { ManUpModule } from 'ionic-manup';
-    import { TranslateModule } from 'ng2-translate';
+    import { ManUpModule, ManUpService, TRANSLATE_SERVICE } from 'ionic-manup';
+    import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 
-    // in your module's import array
-    TranslateModule.forRoot(),
-    ManUpModule.forRoot({url: 'https://example.com/manup.json'})
+
+    @NgModule({
+      declarations: [MyApp, HomePage],
+      imports: [
+        ...
+        ManUpModule.forRoot({
+          url: 'https://example.com/manup.json',
+          externalTranslations: true
+        }),
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useFactory: translateLoader,
+            deps: [HttpClient]
+          }
+        })
+      ],
+      providers: [
+        { provide: TRANSLATE_SERVICE, useClass: TranslateService },
+        ManUpService,
+      ],
+    })
 ```
 
-Note: This is an absolute bare minimum example of loading the module. Follow the instructions linked to above for how to use `ng2-translate` in your app.
+Note: This is an absolute bare minimum example of loading the module. Follow the instructions linked to above for how to use `ngx-translate` in your app.
 
 ### With your own strings
 
@@ -153,7 +177,7 @@ If you want to further customise the messages, you can provide your own translat
 
 #### Setup your language files
 
-Follow the instructions for setting up `ng2-translate` with your Ionic 2 app, and add the following tree to your language files:
+Follow the instructions for setting up `ngx-translate` with your Ionic 2 app, and add the following tree to your language files:
 
 
 ```json
@@ -194,7 +218,7 @@ You need to tell ManUp to use external translations. Modify your Bootstrap like 
 
 ## Demonstration App
 
-A demonstration app is in the `manup-demo` folder. This is the default Ionic 2 tabs starter app, with Manup added.
+A demonstration app is in the `manup-demo` folder. This is the default Ionic 2 starter app, with ManUp added.
 
 ```sh
 cd manup-demo

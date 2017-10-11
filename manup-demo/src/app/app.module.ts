@@ -1,46 +1,51 @@
-import { NgModule, ErrorHandler } from '@angular/core';
-import { Http } from '@angular/http';
-import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
-import { MyApp } from './app.component';
-import { AboutPage } from '../pages/about/about';
-import { ContactPage } from '../pages/contact/contact';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ErrorHandler, NgModule } from '@angular/core';
+import { HttpModule } from '@angular/http';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppVersion } from '@ionic-native/app-version';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
+import { SplashScreen } from '@ionic-native/splash-screen';
+import { StatusBar } from '@ionic-native/status-bar';
+import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
+import { ManUpModule, ManUpService, TRANSLATE_SERVICE } from 'ionic-manup';
+
 import { HomePage } from '../pages/home/home';
-import { TabsPage } from '../pages/tabs/tabs';
-import { ManUpModule, ManUpService } from 'ionic-manup';
-import { TranslateModule, TranslateLoader, TranslateStaticLoader } from 'ng2-translate';
+import { MyApp } from './app.component';
 
-
-export function translateLoader(http: Http) {
-  return new TranslateStaticLoader(http, 'assets/i18n', '.json');
+export function translateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }
-
 @NgModule({
-  declarations: [
-    MyApp,
-    AboutPage,
-    ContactPage,
-    HomePage,
-    TabsPage
-  ],
+  declarations: [MyApp, HomePage],
   imports: [
+    BrowserModule,
     IonicModule.forRoot(MyApp),
-    ManUpModule.forRoot({url: 'https://raw.githubusercontent.com/NextFaze/ionic-manup/master/manup-demo/manup.json', externalTranslations: true}),
+    HttpModule,
+    HttpClientModule,
+    ManUpModule.forRoot({
+      url: 'https://raw.githubusercontent.com/NextFaze/ionic-manup/master/manup-demo/manup.json',
+      externalTranslations: true
+    }),
     TranslateModule.forRoot({
-      provide: TranslateLoader,
-      useFactory: (translateLoader),
-      deps: [Http]
+      loader: {
+        provide: TranslateLoader,
+        useFactory: translateLoader,
+        deps: [HttpClient]
+      }
     })
   ],
   bootstrap: [IonicApp],
-  entryComponents: [
-    MyApp,
-    AboutPage,
-    ContactPage,
-    HomePage,
-    TabsPage
+  providers: [
+    AppVersion,
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
+    { provide: TRANSLATE_SERVICE, useClass: TranslateService },
+    ManUpService,
+    SplashScreen,
+    InAppBrowser,
+    StatusBar
   ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
-    ManUpService
-  ]
+  entryComponents: [MyApp, HomePage]
 })
 export class AppModule {}
