@@ -155,13 +155,10 @@ export class ManUpService {
         .map(response => response.json())
         .toPromise();
 
-      if (response) {
-        if (this.storage) {
-          this.saveMetadata(response).catch(() => {});
-        }
-        return response;
+      if (this.storage) {
+        this.saveMetadata(response).catch(() => {});
       }
-      return this.metadataFromStorage();
+      return response;
     } catch (err) {
       return this.metadataFromStorage();
     }
