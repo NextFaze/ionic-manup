@@ -13,6 +13,35 @@ class MockAppVersion {
 }
 
 describe('Manup Spec', function() {
+  describe('constructor', function() {
+    it('Should configure translation files if it has to', function() {
+      const mockTranslate = {
+        setTranslation: function() {}
+      };
+
+      const config = {
+        externalTranslations: false
+      };
+
+      spyOn(mockTranslate, 'setTranslation');
+      let manup = new ManUpService(<any>config, null, null, null, null, null, mockTranslate, null);
+      expect(mockTranslate.setTranslation).toHaveBeenCalled();
+    });
+    it('Should not configure translation files using external ones', function() {
+      const mockTranslate = {
+        setTranslation: function() {}
+      };
+
+      const config = {
+        externalTranslations: true
+      };
+
+      spyOn(mockTranslate, 'setTranslation');
+      let manup = new ManUpService(<any>config, null, null, null, null, null, mockTranslate, null);
+      expect(mockTranslate.setTranslation).not.toHaveBeenCalled();
+    });
+  });
+
   describe('evaluate', function() {
     it('Should return maintenance mode if json says disabled', function(done) {
       let json = {
