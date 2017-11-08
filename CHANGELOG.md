@@ -1,3 +1,8 @@
+# 0.3.1 2017-11-08 - 
+This release fixes an issue where ManUp threw an unhandled exception if the
+http request failed, for example if the browser aborted the request due to
+failed CORS preflight checks
+
 # 0.3.0 2017-10-11 - _Dep Updates_
 This release updates dependencies to the latest versions, which closes a few issues. This release has *breaking changes* compared to `0.2`
 
