@@ -13,6 +13,35 @@ class MockAppVersion {
 }
 
 describe('Manup Spec', function() {
+  describe('constructor', function() {
+    it('Should configure translation files if it has to', function() {
+      const mockTranslate = {
+        setTranslation: function() {}
+      };
+
+      const config = {
+        externalTranslations: false
+      };
+
+      spyOn(mockTranslate, 'setTranslation');
+      let manup = new ManUpService(<any>config, null, null, null, null, null, mockTranslate, null);
+      expect(mockTranslate.setTranslation).toHaveBeenCalled();
+    });
+    it('Should not configure translation files using external ones', function() {
+      const mockTranslate = {
+        setTranslation: function() {}
+      };
+
+      const config = {
+        externalTranslations: true
+      };
+
+      spyOn(mockTranslate, 'setTranslation');
+      let manup = new ManUpService(<any>config, null, null, null, null, null, mockTranslate, null);
+      expect(mockTranslate.setTranslation).not.toHaveBeenCalled();
+    });
+  });
+
   describe('evaluate', function() {
     it('Should return maintenance mode if json says disabled', function(done) {
       let json = {
@@ -101,18 +130,55 @@ describe('Manup Spec', function() {
       it('Should make an http request', function(done) {
         spyOn(mockHttp, 'get').and.callThrough();
         let manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null, null);
-        manup.metadata().subscribe(data => {
+        manup.metadata().then(data => {
           expect(mockHttp.get).toHaveBeenCalled();
           done();
         });
       });
       it('Should return json', function(done) {
         let manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null, null);
-        manup.metadata().subscribe(data => {
+        manup.metadata().then(data => {
           expect(data.ios).toBeDefined();
           expect(data.ios.url).toBe('http://http.example.com');
           done();
         });
+      });
+
+      it('Should throw an exception if http request fails', done => {
+        let mockHttpErr = {
+          get: function(url: string): Observable<Object> {
+            return Observable.throw(new Error('no good son'));
+          }
+        };
+        let manup = new ManUpService(config, <any>mockHttpErr, null, null, null, null, null, null);
+        manup.metadata().then(
+          data => {
+            expect(true).toBe(null);
+            done();
+          },
+          err => {
+            expect(err).toBeDefined();
+            done();
+          }
+        );
+      });
+      it('Should throw an exception if http returns null as it does from time to time', done => {
+        let mockHttpErr = {
+          get: function(url: string): Observable<Object> {
+            return Observable.of(null);
+          }
+        };
+        let manup = new ManUpService(config, <any>mockHttpErr, null, null, null, null, null, null);
+        manup.metadata().then(
+          data => {
+            expect(true).toBe(null);
+            done();
+          },
+          err => {
+            expect(err).toBeDefined();
+            done();
+          }
+        );
       });
     });
 
@@ -154,7 +220,7 @@ describe('Manup Spec', function() {
         );
         spyOn(mockHttp, 'get').and.callThrough();
         spyOn(manup, 'saveMetadata').and.callThrough();
-        manup.metadata().subscribe((data: any) => {
+        manup.metadata().then((data: any) => {
           response = data;
           done();
         });
@@ -214,7 +280,7 @@ describe('Manup Spec', function() {
           null,
           <any>mockStorage
         );
-        manup.metadata().subscribe(data => {
+        manup.metadata().then(data => {
           expect(mockHttp.get).toHaveBeenCalled();
           done();
         });
@@ -230,7 +296,7 @@ describe('Manup Spec', function() {
           null,
           <any>mockStorage
         );
-        manup.metadata().subscribe(data => {
+        manup.metadata().then(data => {
           expect(mockStorage.get).toHaveBeenCalled();
           done();
         });
@@ -246,7 +312,7 @@ describe('Manup Spec', function() {
           null,
           <any>mockStorage
         );
-        manup.metadata().subscribe(data => {
+        manup.metadata().then(data => {
           expect(data.ios).toBeDefined();
           expect(data.ios.url).toBe('http://storage.example.com');
           done();
@@ -267,7 +333,7 @@ describe('Manup Spec', function() {
       };
       spyOn(mockStorage, 'get').and.callThrough();
       let manup = new ManUpService(null, null, null, null, null, null, null, <any>mockStorage);
-      manup.metadataFromStorage().subscribe(data => {
+      manup.metadataFromStorage().then(data => {
         expect(mockStorage.get).toHaveBeenCalledWith('com.nextfaze.ionic-manup.manup');
         expect(data).toEqual(metadata);
         done();
@@ -282,7 +348,7 @@ describe('Manup Spec', function() {
       };
       spyOn(mockStorage, 'get').and.callThrough();
       let manup = new ManUpService(null, null, null, null, null, null, null, <any>mockStorage);
-      manup.metadataFromStorage().subscribe(
+      manup.metadataFromStorage().then(
         data => {
           expect(true).toBe(false);
         },
@@ -403,6 +469,19 @@ describe('Manup Spec', function() {
 
       expect(() => {
         manup.getPlatformData(json);
+      }).toThrow();
+    });
+
+    it('should throw and error invalid metadata is passed in', function() {
+      let mockPlatform = {
+        is: function(v: String) {
+          return false;
+        }
+      };
+      let manup = new ManUpService(null, null, null, <any>mockPlatform, null, null, null, null);
+
+      expect(() => {
+        manup.getPlatformData(null);
       }).toThrow();
     });
   });
