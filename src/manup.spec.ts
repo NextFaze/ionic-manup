@@ -442,5 +442,18 @@ describe('Manup Spec', function() {
         manup.getPlatformData(json);
       }).toThrow();
     });
+
+    it('should throw and error invalid metadata is passed in', function() {
+      let mockPlatform = {
+        is: function(v: String) {
+          return false;
+        }
+      };
+      let manup = new ManUpService(null, null, null, <any>mockPlatform, null, null, null, null);
+
+      expect(() => {
+        manup.getPlatformData(null);
+      }).toThrow();
+    });
   });
 });
