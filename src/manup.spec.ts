@@ -101,18 +101,55 @@ describe('Manup Spec', function() {
       it('Should make an http request', function(done) {
         spyOn(mockHttp, 'get').and.callThrough();
         let manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null, null);
-        manup.metadata().subscribe(data => {
+        manup.metadata().then(data => {
           expect(mockHttp.get).toHaveBeenCalled();
           done();
         });
       });
       it('Should return json', function(done) {
         let manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null, null);
-        manup.metadata().subscribe(data => {
+        manup.metadata().then(data => {
           expect(data.ios).toBeDefined();
           expect(data.ios.url).toBe('http://http.example.com');
           done();
         });
+      });
+
+      it('Should throw an exception if http request fails', done => {
+        let mockHttpErr = {
+          get: function(url: string): Observable<Object> {
+            return Observable.throw(new Error('no good son'));
+          }
+        };
+        let manup = new ManUpService(config, <any>mockHttpErr, null, null, null, null, null, null);
+        manup.metadata().then(
+          data => {
+            expect(true).toBe(null);
+            done();
+          },
+          err => {
+            expect(err).toBeDefined();
+            done();
+          }
+        );
+      });
+      it('Should throw an exception if http returns null as it does from time to time', done => {
+        let mockHttpErr = {
+          get: function(url: string): Observable<Object> {
+            return Observable.of(null);
+          }
+        };
+        let manup = new ManUpService(config, <any>mockHttpErr, null, null, null, null, null, null);
+        manup.metadata().then(
+          data => {
+            expect(true).toBe(null);
+            done();
+          },
+          err => {
+            expect(err).toBeDefined();
+            done();
+          }
+        );
       });
     });
 
@@ -154,7 +191,7 @@ describe('Manup Spec', function() {
         );
         spyOn(mockHttp, 'get').and.callThrough();
         spyOn(manup, 'saveMetadata').and.callThrough();
-        manup.metadata().subscribe((data: any) => {
+        manup.metadata().then((data: any) => {
           response = data;
           done();
         });
@@ -214,7 +251,7 @@ describe('Manup Spec', function() {
           null,
           <any>mockStorage
         );
-        manup.metadata().subscribe(data => {
+        manup.metadata().then(data => {
           expect(mockHttp.get).toHaveBeenCalled();
           done();
         });
@@ -230,7 +267,7 @@ describe('Manup Spec', function() {
           null,
           <any>mockStorage
         );
-        manup.metadata().subscribe(data => {
+        manup.metadata().then(data => {
           expect(mockStorage.get).toHaveBeenCalled();
           done();
         });
@@ -246,7 +283,7 @@ describe('Manup Spec', function() {
           null,
           <any>mockStorage
         );
-        manup.metadata().subscribe(data => {
+        manup.metadata().then(data => {
           expect(data.ios).toBeDefined();
           expect(data.ios.url).toBe('http://storage.example.com');
           done();
@@ -267,7 +304,7 @@ describe('Manup Spec', function() {
       };
       spyOn(mockStorage, 'get').and.callThrough();
       let manup = new ManUpService(null, null, null, null, null, null, null, <any>mockStorage);
-      manup.metadataFromStorage().subscribe(data => {
+      manup.metadataFromStorage().then(data => {
         expect(mockStorage.get).toHaveBeenCalledWith('com.nextfaze.ionic-manup.manup');
         expect(data).toEqual(metadata);
         done();
@@ -282,7 +319,7 @@ describe('Manup Spec', function() {
       };
       spyOn(mockStorage, 'get').and.callThrough();
       let manup = new ManUpService(null, null, null, null, null, null, null, <any>mockStorage);
-      manup.metadataFromStorage().subscribe(
+      manup.metadataFromStorage().then(
         data => {
           expect(true).toBe(false);
         },

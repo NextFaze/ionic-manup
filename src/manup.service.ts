@@ -99,31 +99,32 @@ export class ManUpService {
      * 
      * @Returns a promise that resolves if the app is able to continue.
      */
-  public validate(): Promise<any> {
-    if (!this.inProgress) {
-      this.inProgress = true;
-      this.currentPromise = new Promise((resolve, reject) => {
-        this.platform.ready().then(() => {
-          this.metadata()
-            .map(response => this.getPlatformData(response))
-            .subscribe(metadata => {
-              this.evaluate(metadata).then(
-                alert => {
-                  switch (alert) {
-                    case AlertType.NOP:
-                      resolve();
-                      break;
-                    default:
-                      return this.presentAlert(alert, metadata);
-                  }
-                },
-                error => resolve()
-              );
-            });
+  public async validate(): Promise<any> {
+    try {
+      if (!this.inProgress) {
+        this.inProgress = true;
+        this.currentPromise = new Promise((resolve, reject) => {
+          this.platform.ready().then(async () => {
+            const metadata = await this.metadata();
+            // Be generous, if we couldn't get the ManUp data let the app run
+            if (!metadata) {
+              return resolve();
+            }
+            const result = await this.evaluate(await this.getPlatformData(metadata));
+            switch (result) {
+              case AlertType.NOP:
+                resolve();
+                break;
+              default:
+                return this.presentAlert(result, metadata);
+            }
+          });
         });
-      });
+      }
+      return this.currentPromise;
+    } catch (err) {
+      return Promise.resolve();
     }
-    return this.currentPromise;
   }
 
   /**
@@ -131,39 +132,39 @@ export class ManUpService {
    * 
    * Returns a promise that resolves with an alert type.
    */
-  public evaluate(metadata: PlatformData): Promise<AlertType> {
+  public async evaluate(metadata: PlatformData): Promise<AlertType> {
     if (!metadata.enabled) {
       return Promise.resolve(AlertType.MAINTENANCE);
     }
-    return this.AppVersion.getVersionNumber().then((version: string) => {
-      if (semver.lt(version, metadata.minimum)) {
-        return AlertType.MANDATORY;
-      } else if (semver.lt(version, metadata.latest)) {
-        return AlertType.OPTIONAL;
-      }
-      return AlertType.NOP;
-    });
+    const version = await this.AppVersion.getVersionNumber();
+    if (semver.lt(version, metadata.minimum)) {
+      return AlertType.MANDATORY;
+    } else if (semver.lt(version, metadata.latest)) {
+      return AlertType.OPTIONAL;
+    }
+    return AlertType.NOP;
   }
 
   /**
    * Fetches the remote metadata and returns an observable with the json
    */
-  public metadata(): Observable<ManUpData> {
-    return this.http
-      .get(this.config.url)
-      .map(response => response.json())
-      .map(response => {
+  public async metadata(): Promise<ManUpData> {
+    try {
+      const response = await this.http
+        .get(this.config.url)
+        .map(response => response.json())
+        .toPromise();
+
+      if (response) {
         if (this.storage) {
           this.saveMetadata(response).catch(() => {});
         }
         return response;
-      })
-      .catch(err => {
-        if (this.storage) {
-          return this.metadataFromStorage();
-        }
-        return err;
-      });
+      }
+      return this.metadataFromStorage();
+    } catch (err) {
+      return this.metadataFromStorage();
+    }
   }
 
   /**
@@ -175,11 +176,9 @@ export class ManUpService {
      * 
      * @memberOf ManUpService
      */
-  metadataFromStorage(): Observable<ManUpData> {
+  metadataFromStorage(): Promise<ManUpData> {
     if (this.storage) {
-      return Observable.fromPromise(<Promise<string>>this.storage.get(
-        STORAGE_KEY + '.manup'
-      )).map(v => JSON.parse(v));
+      return this.storage.get(STORAGE_KEY + '.manup').then(data => JSON.parse(data));
     } else {
       throw new Error('Storage not configured');
     }
@@ -208,6 +207,9 @@ export class ManUpService {
      * Returns the branch of the metadata relevant to this platform
      */
   public getPlatformData(metadata: ManUpData): PlatformData {
+    if (!metadata) {
+      throw new Error('metadata does not exist');
+    }
     if (this.platform.is('ios')) {
       return metadata.ios;
     }
