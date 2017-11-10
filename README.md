@@ -222,7 +222,7 @@ A demonstration app is in the `manup-demo` folder. This is the default Ionic 2 s
 
 ```sh
 cd manup-demo
-ionic emulate ios
+ionic cordova emulate ios
 ```
 
 Assuming you have Ionic installed.
