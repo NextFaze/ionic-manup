@@ -20,11 +20,7 @@
     "type": "git",
     "url": "https://github.com/NextFaze/ionic-manup"
   },
-  "keywords": [
-    "ionic",
-    "angular",
-    "manup"
-  ],
+  "keywords": ["ionic", "angular", "manup"],
   "author": "Michael Marner <npm-support@nextfaze.com>",
   "license": "MIT",
   "devDependencies": {
@@ -37,10 +33,10 @@
     "@angular/platform-browser": "^4.4.3",
     "@angular/platform-browser-dynamic": "^4.4.3",
     "@angular/platform-server": "^4.4.3",
-    "@ionic-native/app-version": "^4.3.1",
-    "@ionic-native/core": "^4.3.1",
-    "@ionic-native/in-app-browser": "^4.3.1",
-    "@ionic/storage": "^1.1.9",
+    "@ionic-native/app-version": "4.3.1",
+    "@ionic-native/core": "4.3.1",
+    "@ionic-native/in-app-browser": "4.3.1",
+    "@ionic/storage": "1.1.9",
     "@ngx-translate/core": "^7.0.0",
     "@types/jasmine": "^2.5.41",
     "@types/node": "^7.0.5",

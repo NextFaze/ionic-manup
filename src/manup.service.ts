@@ -1,5 +1,6 @@
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/toPromise';
 
 import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
 import { Http } from '@angular/http';
