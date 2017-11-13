@@ -1,6 +1,6 @@
 {
   "name": "ionic-manup",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Mandatory Update for Ionic 2 apps",
   "main": "lib/main.js",
   "typings": "lib/main",
@@ -20,7 +20,11 @@
     "type": "git",
     "url": "https://github.com/NextFaze/ionic-manup"
   },
-  "keywords": ["ionic", "angular", "manup"],
+  "keywords": [
+    "ionic",
+    "angular",
+    "manup"
+  ],
   "author": "Michael Marner <npm-support@nextfaze.com>",
   "license": "MIT",
   "devDependencies": {
