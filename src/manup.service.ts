@@ -111,13 +111,14 @@ export class ManUpService {
             if (!metadata) {
               return resolve();
             }
-            const result = await this.evaluate(await this.getPlatformData(metadata));
+            const platformData = await this.getPlatformData(metadata);
+            const result = await this.evaluate(platformData);
             switch (result) {
               case AlertType.NOP:
                 resolve();
                 break;
               default:
-                return this.presentAlert(result, metadata);
+                return this.presentAlert(result, platformData);
             }
           });
         });
@@ -221,14 +222,14 @@ export class ManUpService {
   }
 
   /**
-     * Presents an update alert.
-     * 
-     * @param type The type of alert to show
-     * @param platformData The metadata for the platform
-     * 
-     * @returns A promise that resolves when this whole thing is over.
-     */
-  private presentAlert(type: AlertType, platformData: any): Promise<any> {
+   * Presents an update alert.
+   *
+   * @param type The type of alert to show
+   * @param platformData The metadata for the platform
+   *
+   * @returns A promise that resolves when this whole thing is over.
+   */
+  public presentAlert(type: AlertType, platformData: any): Promise<any> {
     switch (type) {
       case AlertType.MANDATORY:
         return this.presentMandatoryUpdate(platformData);
