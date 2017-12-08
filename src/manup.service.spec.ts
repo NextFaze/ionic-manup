@@ -1,6 +1,7 @@
 import 'rxjs/add/observable/of';
 
 import { Observable } from 'rxjs/Rx';
+import { setTimeout } from 'timers';
 import { error } from 'util';
 
 import { ManUpConfig } from './manup.config';
@@ -39,6 +40,73 @@ describe('Manup Spec', function() {
       spyOn(mockTranslate, 'setTranslation');
       let manup = new ManUpService(<any>config, null, null, null, null, null, mockTranslate, null);
       expect(mockTranslate.setTranslation).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('validate', function() {
+    it('should call presentAlert with the platform data', done => {
+      let json = {
+        minimum: '2.3.5',
+        latest: '2.3.5',
+        url: 'http://example.com',
+        enabled: false
+      };
+      const mockTranslate = {
+        setTranslation: function() {}
+      };
+      const mockHttp = {
+        get: function(url: string): Observable<Object> {
+          return Observable.of({
+            json: function(): Object {
+              return {
+                ios: {
+                  minimum: '2.4.5',
+                  latest: '2.4.5',
+                  enabled: true,
+                  url: 'http://http.example.com'
+                }
+              };
+            }
+          });
+        }
+      };
+
+      const config = {
+        externalTranslations: false,
+        url: 'http://example.com'
+      };
+
+      const mockAlert = {
+        create: function() {}
+      };
+
+      const mockPlatform = {
+        ready: () => Promise.resolve(),
+        is: (platform: string) => platform === 'ios'
+      };
+
+      let manup = new ManUpService(
+        config,
+        <any>mockHttp,
+        <any>mockAlert,
+        <any>mockPlatform,
+        null,
+        <any>MockAppVersion,
+        null,
+        null
+      );
+      spyOn(manup, 'presentAlert');
+
+      manup.validate();
+      setTimeout(() => {
+        expect(manup.presentAlert).toHaveBeenCalledWith(AlertType.MANDATORY, {
+          minimum: '2.4.5',
+          latest: '2.4.5',
+          enabled: true,
+          url: 'http://http.example.com'
+        });
+        done();
+      }, 1000);
     });
   });
 
