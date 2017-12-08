@@ -8,7 +8,6 @@ import { AppVersion } from '@ionic-native/app-version';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Storage } from '@ionic/storage';
 import { AlertController, Platform } from 'ionic-angular';
-import { Observable } from 'rxjs';
 import * as semver from 'semver';
 
 import { i18n } from './i18n';
@@ -26,23 +25,23 @@ const STORAGE_KEY = 'com.nextfaze.ionic-manup';
  */
 export enum AlertType {
   /**
-     * A mandatory update is required
-     */
+   * A mandatory update is required
+   */
   MANDATORY,
 
   /**
-     * An optional update is available
-     */
+   * An optional update is available
+   */
   OPTIONAL,
 
   /**
-     * The app is disabled
-     */
+   * The app is disabled
+   */
   MAINTENANCE,
 
   /**
-     * Nothing to see here
-     */
+   * Nothing to see here
+   */
   NOP
 }
 
@@ -85,21 +84,21 @@ export class ManUpService {
   }
 
   /**
-     * True if there is an alert already displayed. Used to prevent multiple alerts 
-     * being presented on top of one another
-     */
+   * True if there is an alert already displayed. Used to prevent multiple alerts
+   * being presented on top of one another
+   */
   private inProgress: boolean = false;
 
   /**
-     * A reference to the current unresolved promise
-     */
+   * A reference to the current unresolved promise
+   */
   private currentPromise: Promise<any>;
 
   /**
-     * Begins the manup check process.
-     * 
-     * @Returns a promise that resolves if the app is able to continue.
-     */
+   * Begins the manup check process.
+   *
+   * @Returns a promise that resolves if the app is able to continue.
+   */
   public async validate(): Promise<any> {
     try {
       if (!this.inProgress) {
@@ -131,7 +130,7 @@ export class ManUpService {
 
   /**
    * Evaluates what kind of update is required, if any.
-   * 
+   *
    * Returns a promise that resolves with an alert type.
    */
   public async evaluate(metadata: PlatformData): Promise<AlertType> {
@@ -167,14 +166,14 @@ export class ManUpService {
   }
 
   /**
-     * Gets the version metadata from storage, if available.
-     * 
-     * @private
-     * @throws An error if the service was instantiated without a Storage component.
-     * @returns {Promise<any>} That resolves with the metadata
-     * 
-     * @memberOf ManUpService
-     */
+   * Gets the version metadata from storage, if available.
+   *
+   * @private
+   * @throws An error if the service was instantiated without a Storage component.
+   * @returns {Promise<any>} That resolves with the metadata
+   *
+   * @memberOf ManUpService
+   */
   metadataFromStorage(): Promise<ManUpData> {
     if (this.storage) {
       return this.storage.get(STORAGE_KEY + '.manup').then(data => JSON.parse(data));
@@ -184,16 +183,16 @@ export class ManUpService {
   }
 
   /**
-     * 
-     * Saves the metadata to storage.
-     * 
-     * @private
-     * @param {ManUpData} metadata The metadata to store
-     * @throws {Error} if storage if not configured
-     * @returns {Promise<any>} A promise that resolves when the save succeeds
-     * 
-     * @memberOf ManUpService
-     */
+   *
+   * Saves the metadata to storage.
+   *
+   * @private
+   * @param {ManUpData} metadata The metadata to store
+   * @throws {Error} if storage if not configured
+   * @returns {Promise<any>} A promise that resolves when the save succeeds
+   *
+   * @memberOf ManUpService
+   */
   public saveMetadata(metadata: ManUpData): Promise<any> {
     if (this.storage) {
       return this.storage.set(STORAGE_KEY + '.manup', JSON.stringify(metadata));
@@ -203,8 +202,8 @@ export class ManUpService {
   }
 
   /**
-     * Returns the branch of the metadata relevant to this platform
-     */
+   * Returns the branch of the metadata relevant to this platform
+   */
   public getPlatformData(metadata: ManUpData): PlatformData {
     if (!metadata) {
       throw new Error('metadata does not exist');
@@ -243,10 +242,10 @@ export class ManUpService {
   }
 
   /**
-     * Displays a maintenance mode alert.
-     * 
-     * @returns a promise that will never resolve, because the app should not continue
-     */
+   * Displays a maintenance mode alert.
+   *
+   * @returns a promise that will never resolve, because the app should not continue
+   */
   presentMaintenanceMode(): Promise<any> {
     return this.AppVersion.getAppName().then((name: string) => {
       return new Promise((resolve, reject) => {
@@ -265,10 +264,10 @@ export class ManUpService {
   }
 
   /**
-     * Displays a mandatory update alert.
-     * 
-     * @returns a promise that will never resolve, because the app should not continue
-     */
+   * Displays a mandatory update alert.
+   *
+   * @returns a promise that will never resolve, because the app should not continue
+   */
   presentMandatoryUpdate(platformData: any): Promise<any> {
     return this.AppVersion.getAppName().then((name: string) => {
       return new Promise((resolve, reject) => {
@@ -296,10 +295,10 @@ export class ManUpService {
   }
 
   /**
-     * Displays an optional update alert.
-     * 
-     * @returns a promise that will resolves if the user selects 'not now'
-     */
+   * Displays an optional update alert.
+   *
+   * @returns a promise that will resolves if the user selects 'not now'
+   */
   presentOptionalUpdate(platformData: any): Promise<any> {
     return this.AppVersion.getAppName().then((name: string) => {
       return new Promise((resolve, reject) => {
