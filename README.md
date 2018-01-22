@@ -47,8 +47,8 @@ In your ionic project root:
 
 ```sh
 npm install --save @ionic/storage @ionic-native/app-version @ionic-native/in-app-browser
-ionic plugin add cordova-plugin-app-version
-ionic plugin add cordova-plugin-inappbrowser
+ionic cordova plugin add cordova-plugin-app-version
+ionic cordova plugin add cordova-plugin-inappbrowser
 ```
 
 Manup assumes you are using Semantic Versioning for your app.
