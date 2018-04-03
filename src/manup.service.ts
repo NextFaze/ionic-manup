@@ -110,20 +110,25 @@ export class ManUpService {
             if (!metadata) {
               return resolve();
             }
-            const platformData = await this.getPlatformData(metadata);
-            const result = await this.evaluate(platformData);
-            switch (result) {
-              case AlertType.NOP:
-                resolve();
-                break;
-              default:
-                return this.presentAlert(result, platformData);
+            try {
+              const platformData = await this.getPlatformData(metadata);
+              const result = await this.evaluate(platformData);
+              switch (result) {
+                case AlertType.NOP:
+                  resolve();
+                  break;
+                default:
+                  return this.presentAlert(result, platformData);
+              }
+            } catch (e) {
+              return resolve();
             }
           });
         });
       }
       return this.currentPromise;
     } catch (err) {
+      console.log(err);
       return Promise.resolve();
     }
   }
@@ -161,6 +166,7 @@ export class ManUpService {
       }
       return response;
     } catch (err) {
+      console.log(err);
       return this.metadataFromStorage();
     }
   }
