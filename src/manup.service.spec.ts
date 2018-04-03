@@ -44,42 +44,40 @@ describe('Manup Spec', function() {
   });
 
   describe('validate', function() {
+    let json = {
+      minimum: '2.3.5',
+      latest: '2.3.5',
+      url: 'http://example.com',
+      enabled: false
+    };
+    const mockTranslate = {
+      setTranslation: function() {}
+    };
+    const mockHttp = {
+      get: function(url: string): Observable<Object> {
+        return Observable.of({
+          json: function(): Object {
+            return {
+              ios: {
+                minimum: '2.4.5',
+                latest: '2.4.5',
+                enabled: true,
+                url: 'http://http.example.com'
+              }
+            };
+          }
+        });
+      }
+    };
+    const config = {
+      externalTranslations: false,
+      url: 'http://example.com'
+    };
+    const mockAlert = {
+      create: function() {}
+    };
+
     it('should call presentAlert with the platform data', done => {
-      let json = {
-        minimum: '2.3.5',
-        latest: '2.3.5',
-        url: 'http://example.com',
-        enabled: false
-      };
-      const mockTranslate = {
-        setTranslation: function() {}
-      };
-      const mockHttp = {
-        get: function(url: string): Observable<Object> {
-          return Observable.of({
-            json: function(): Object {
-              return {
-                ios: {
-                  minimum: '2.4.5',
-                  latest: '2.4.5',
-                  enabled: true,
-                  url: 'http://http.example.com'
-                }
-              };
-            }
-          });
-        }
-      };
-
-      const config = {
-        externalTranslations: false,
-        url: 'http://example.com'
-      };
-
-      const mockAlert = {
-        create: function() {}
-      };
-
       const mockPlatform = {
         ready: () => Promise.resolve(),
         is: (platform: string) => platform === 'ios'
@@ -107,6 +105,31 @@ describe('Manup Spec', function() {
         });
         done();
       }, 1000);
+    });
+
+    it('Should silently resolve if the platform was not found in manup config', async () => {
+      const mockPlatform = {
+        ready: () => Promise.resolve(),
+        is: (platform: string) => platform === 'browser'
+      };
+
+      let manup = new ManUpService(
+        config,
+        <any>mockHttp,
+        <any>mockAlert,
+        <any>mockPlatform,
+        null,
+        <any>MockAppVersion,
+        null,
+        null
+      );
+      spyOn(manup, 'presentAlert');
+
+      try {
+        await manup.validate();
+      } catch (e) {
+        expect(e).toBeUndefined();
+      }
     });
   });
 
