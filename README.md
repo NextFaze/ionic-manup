@@ -137,7 +137,11 @@ The service uses [ngx-translate](https://www.npmjs.com/package/ng2-translate) to
 
 To make life easy for app developers, the service includes its own translation strings. All you need to do is add `ngx-translate` to your Ionic app and set the active language. Due to the way AOT works, you also need to provide a `TRANSLATE_SERVICE` for ManUp to use.
 
-Languages supported are currently limited to English and a Google Translated Spanish. We would love pull requests for new languages.
+Languages supported are currently limited to English, Italian and a Google Translated Spanish. We would love pull requests for new languages. To add a language:
+
+* Create a new file `[lang].ts` for your language.
+* Using `en.ts` as an example, add the translations
+* Add the new language to `i18n/index.ts`
 
 #### Boostrap ngx-translate with your app!
 
