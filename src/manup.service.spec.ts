@@ -19,7 +19,7 @@ describe('Manup Spec', function() {
     it('Should configure translation files if it has to', function() {
       const mockTranslate = {
         setTranslation: function() {},
-        onLangChange: () => Observable.of({ lang: 'en' })
+        onLangChange: Observable.of({ lang: 'en' })
       };
 
       const config = {

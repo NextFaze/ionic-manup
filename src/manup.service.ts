@@ -77,11 +77,12 @@ export class ManUpService {
   ) {
     // load the translations unless we've been told not to
     if (this.translate && !this.config.externalTranslations) {
-      this.translate.onLangChange().subscribe((event: { lang: string; translations: any }) => {
+      this.translate.onLangChange.subscribe((event: { lang: string; translations: any }) => {
         this.loadTranslations(event.lang);
       });
-      this.loadTranslations(this.translate.defaultLang);
-      this.loadTranslations(this.translate.currentLang);
+      this.translate.onDefaultLangChange.subscribe((event: { lang: string; translations: any }) => {
+        this.loadTranslations(event.lang);
+      });
     }
   }
 
