@@ -77,9 +77,36 @@ export class ManUpService {
   ) {
     // load the translations unless we've been told not to
     if (this.translate && !this.config.externalTranslations) {
-      for (let lang of i18n) {
-        this.translate.setTranslation(lang.lang, lang.translations, true);
-      }
+      this.translate.onLangChange().subscribe((event: { lang: string; translations: any }) => {
+        this.loadTranslations(event.lang);
+      });
+      this.loadTranslations(this.translate.defaultLang);
+      this.loadTranslations(this.translate.currentLang);
+    }
+  }
+
+  /**
+   * Loads the translations into the translation service.
+   *
+   * * Loads the language requested, if available
+   * * Loads the default lang, if we have it
+   * * Loads english into the default lang as a last resort
+   */
+  public loadTranslations(lang: string) {
+    if (i18n[lang]) {
+      this.translate.setTranslation(lang, i18n[lang].translations, true);
+    }
+    // load the default language, if we have it
+    else if (i18n[this.translate.defaultLang]) {
+      this.translate.setTranslation(
+        this.translate.defaultLang,
+        i18n[this.translate.defaultLang].translations,
+        true
+      );
+    }
+    // fall back to english, so we never see the raw translation strings
+    else {
+      this.translate.setTranslation(this.translate.defaultLang, i18n.en.translations, true);
     }
   }
 
@@ -128,7 +155,6 @@ export class ManUpService {
       }
       return this.currentPromise;
     } catch (err) {
-      console.log(err);
       return Promise.resolve();
     }
   }
@@ -166,7 +192,6 @@ export class ManUpService {
       }
       return response;
     } catch (err) {
-      console.log(err);
       return this.metadataFromStorage();
     }
   }
