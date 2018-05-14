@@ -26,7 +26,7 @@ export function translateLoader(http: HttpClient) {
     HttpClientModule,
     ManUpModule.forRoot({
       url: 'https://raw.githubusercontent.com/NextFaze/ionic-manup/master/manup-demo/manup.json',
-      externalTranslations: true
+      externalTranslations: false
     }),
     TranslateModule.forRoot({
       loader: {

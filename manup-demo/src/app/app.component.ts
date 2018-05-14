@@ -18,13 +18,14 @@ export class MyApp {
     statusBar: StatusBar,
     splashScreen: SplashScreen,
     manup: ManUpService,
-    translate: TranslateService
+    private translate: TranslateService
   ) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
 
-      translate.setDefaultLang('es');
+      this.translate.setDefaultLang('en');
+      this.translate.use('it');
       manup.validate();
 
       statusBar.styleDefault();
