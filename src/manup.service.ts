@@ -74,17 +74,7 @@ export class ManUpService {
     @Inject(TRANSLATE_SERVICE)
     private translate: any,
     @Optional() private storage: Storage
-  ) {
-    // load the translations unless we've been told not to
-    if (this.translate && !this.config.externalTranslations) {
-      this.translate.onLangChange.subscribe((event: { lang: string; translations: any }) => {
-        this.loadTranslations(event.lang);
-      });
-      this.translate.onDefaultLangChange.subscribe((event: { lang: string; translations: any }) => {
-        this.loadTranslations(event.lang);
-      });
-    }
-  }
+  ) {}
 
   /**
    * Loads the translations into the translation service.
@@ -93,9 +83,13 @@ export class ManUpService {
    * * Loads the default lang, if we have it
    * * Loads english into the default lang as a last resort
    */
-  public loadTranslations(lang: string) {
-    if (i18n[lang]) {
-      this.translate.setTranslation(lang, i18n[lang].translations, true);
+  public loadTranslations() {
+    if (i18n[this.translate.currentLang]) {
+      this.translate.setTranslation(
+        this.translate.currentLang,
+        i18n[this.translate.currentLang].translations,
+        true
+      );
     }
     // load the default language, if we have it
     else if (i18n[this.translate.defaultLang]) {
@@ -261,6 +255,10 @@ export class ManUpService {
    * @returns A promise that resolves when this whole thing is over.
    */
   public presentAlert(type: AlertType, platformData: any): Promise<any> {
+    // load the translations unless we've been told not to
+    if (this.translate && !this.config.externalTranslations) {
+      this.loadTranslations();
+    }
     switch (type) {
       case AlertType.MANDATORY:
         return this.presentMandatoryUpdate(platformData);
