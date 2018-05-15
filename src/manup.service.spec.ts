@@ -15,35 +15,7 @@ class MockAppVersion {
 }
 
 describe('Manup Spec', function() {
-  describe('constructor', function() {
-    it('Should configure translation files if it has to', function() {
-      const mockTranslate = {
-        setTranslation: function() {},
-        onLangChange: Observable.of({ lang: 'en' })
-      };
-
-      const config = {
-        externalTranslations: false
-      };
-
-      spyOn(mockTranslate, 'setTranslation');
-      let manup = new ManUpService(<any>config, null, null, null, null, null, mockTranslate, null);
-      expect(mockTranslate.setTranslation).toHaveBeenCalled();
-    });
-    it('Should not configure translation files using external ones', function() {
-      const mockTranslate = {
-        setTranslation: function() {}
-      };
-
-      const config = {
-        externalTranslations: true
-      };
-
-      spyOn(mockTranslate, 'setTranslation');
-      let manup = new ManUpService(<any>config, null, null, null, null, null, mockTranslate, null);
-      expect(mockTranslate.setTranslation).not.toHaveBeenCalled();
-    });
-  });
+  describe('constructor', function() {});
 
   describe('loadTranslations', () => {
     let manup: ManUpService;
@@ -60,19 +32,22 @@ describe('Manup Spec', function() {
 
     it('Should load translations for a language we support', () => {
       spyOn(mockTranslate, 'setTranslation');
-      manup.loadTranslations('en');
+      mockTranslate.currentLang = 'en';
+      manup.loadTranslations();
       expect(mockTranslate.setTranslation).toHaveBeenCalledWith('en', i18n.en.translations, true);
     });
     it('Should load translations for the default lang if we dont support the requested lang', () => {
       mockTranslate.defaultLang = 'it';
+      mockTranslate.currentLang = 'asdf';
       spyOn(mockTranslate, 'setTranslation');
-      manup.loadTranslations('asdf');
+      manup.loadTranslations();
       expect(mockTranslate.setTranslation).toHaveBeenCalledWith('it', i18n.it.translations, true);
     });
     it('Should load english if we dont support the requested or default languages', () => {
       mockTranslate.defaultLang = 'notReal';
+      mockTranslate.currentLang = 'asdf';
       spyOn(mockTranslate, 'setTranslation');
-      manup.loadTranslations('asdf');
+      manup.loadTranslations();
       expect(mockTranslate.setTranslation).toHaveBeenCalledWith(
         'notReal',
         i18n.en.translations,
