@@ -1,9 +1,10 @@
 import 'rxjs/add/observable/of';
 
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
 import { setTimeout } from 'timers';
 import { error } from 'util';
 
+import { i18n } from './i18n';
 import { ManUpConfig } from './manup.config';
 import { AlertType, ManUpService } from './manup.service';
 
@@ -14,32 +15,44 @@ class MockAppVersion {
 }
 
 describe('Manup Spec', function() {
-  describe('constructor', function() {
-    it('Should configure translation files if it has to', function() {
-      const mockTranslate = {
-        setTranslation: function() {}
-      };
+  describe('constructor', function() {});
 
-      const config = {
-        externalTranslations: false
-      };
-
-      spyOn(mockTranslate, 'setTranslation');
-      let manup = new ManUpService(<any>config, null, null, null, null, null, mockTranslate, null);
-      expect(mockTranslate.setTranslation).toHaveBeenCalled();
-    });
-    it('Should not configure translation files using external ones', function() {
-      const mockTranslate = {
-        setTranslation: function() {}
-      };
-
+  describe('loadTranslations', () => {
+    let manup: ManUpService;
+    let mockTranslate: any;
+    beforeEach(() => {
       const config = {
         externalTranslations: true
       };
+      mockTranslate = {
+        setTranslation: function() {}
+      };
+      manup = new ManUpService(<any>config, null, null, null, null, null, mockTranslate, null);
+    });
 
+    it('Should load translations for a language we support', () => {
       spyOn(mockTranslate, 'setTranslation');
-      let manup = new ManUpService(<any>config, null, null, null, null, null, mockTranslate, null);
-      expect(mockTranslate.setTranslation).not.toHaveBeenCalled();
+      mockTranslate.currentLang = 'en';
+      manup.loadTranslations();
+      expect(mockTranslate.setTranslation).toHaveBeenCalledWith('en', i18n.en.translations, true);
+    });
+    it('Should load translations for the default lang if we dont support the requested lang', () => {
+      mockTranslate.defaultLang = 'it';
+      mockTranslate.currentLang = 'asdf';
+      spyOn(mockTranslate, 'setTranslation');
+      manup.loadTranslations();
+      expect(mockTranslate.setTranslation).toHaveBeenCalledWith('it', i18n.it.translations, true);
+    });
+    it('Should load english if we dont support the requested or default languages', () => {
+      mockTranslate.defaultLang = 'notReal';
+      mockTranslate.currentLang = 'asdf';
+      spyOn(mockTranslate, 'setTranslation');
+      manup.loadTranslations();
+      expect(mockTranslate.setTranslation).toHaveBeenCalledWith(
+        'notReal',
+        i18n.en.translations,
+        true
+      );
     });
   });
 

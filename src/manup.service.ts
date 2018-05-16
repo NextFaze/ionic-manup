@@ -74,12 +74,34 @@ export class ManUpService {
     @Inject(TRANSLATE_SERVICE)
     private translate: any,
     @Optional() private storage: Storage
-  ) {
-    // load the translations unless we've been told not to
-    if (this.translate && !this.config.externalTranslations) {
-      for (let lang of i18n) {
-        this.translate.setTranslation(lang.lang, lang.translations, true);
-      }
+  ) {}
+
+  /**
+   * Loads the translations into the translation service.
+   *
+   * * Loads the language requested, if available
+   * * Loads the default lang, if we have it
+   * * Loads english into the default lang as a last resort
+   */
+  public loadTranslations() {
+    if (i18n[this.translate.currentLang]) {
+      this.translate.setTranslation(
+        this.translate.currentLang,
+        i18n[this.translate.currentLang].translations,
+        true
+      );
+    }
+    // load the default language, if we have it
+    else if (i18n[this.translate.defaultLang]) {
+      this.translate.setTranslation(
+        this.translate.defaultLang,
+        i18n[this.translate.defaultLang].translations,
+        true
+      );
+    }
+    // fall back to english, so we never see the raw translation strings
+    else {
+      this.translate.setTranslation(this.translate.defaultLang, i18n.en.translations, true);
     }
   }
 
@@ -128,7 +150,6 @@ export class ManUpService {
       }
       return this.currentPromise;
     } catch (err) {
-      console.log(err);
       return Promise.resolve();
     }
   }
@@ -166,7 +187,6 @@ export class ManUpService {
       }
       return response;
     } catch (err) {
-      console.log(err);
       return this.metadataFromStorage();
     }
   }
@@ -235,6 +255,10 @@ export class ManUpService {
    * @returns A promise that resolves when this whole thing is over.
    */
   public presentAlert(type: AlertType, platformData: any): Promise<any> {
+    // load the translations unless we've been told not to
+    if (this.translate && !this.config.externalTranslations) {
+      this.loadTranslations();
+    }
     switch (type) {
       case AlertType.MANDATORY:
         return this.presentMandatoryUpdate(platformData);
