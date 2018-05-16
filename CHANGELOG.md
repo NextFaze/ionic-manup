@@ -1,14 +1,42 @@
-# 0.3.1 2017-11-08 - 
+# 0.4.0 2018-05-16 - Fix i18n issues, add Italian language
+
+This release fixes issues with how ngx-translate was being used with ManUp. ManUp now loads its translation strings just before it needs to prevent an alert. Previously, it loaded translation strings on initialisation. This could cause issues with the host app losing translation strings, or ManUp showing raw untranslated strings to the user when presenting an alert.
+
+All detailed in #31
+
+## Italian Language Support
+
+This release also adds translation support for Italian language! Thanks @grcasanova for the contribution!
+
+# 0.3.5 2018-04-03 - Deal with non-cordova platforms
+
+Bugfix release which stops ManUp throwing an unhandled exception if running on a non-Cordova platform (ie web). ManUp does not present alerts on web, because we assume the web is always on the latest version.
+
+Not crashing with an exception is much better thand crashing.
+
+# 0.3.4 2017-12-08 - Fix App Store Buttons
+
+This patch release fixes #28, making the buttons linking the user to update sites work again. Thanks to @yanglongji for flagging this bug.
+
+# 0.3.3 2017-11-13 -
+
+This release fixes a bug where validate would always succeed, regardless of app version. Underlying bug caused by missing rxjs operator, which has now been resolved.
+
+Thanks @TheMadBug for bringing #24 to our attention
+
+# 0.3.1 2017-11-08 -
+
 This release fixes an issue where ManUp threw an unhandled exception if the
 http request failed, for example if the browser aborted the request due to
 failed CORS preflight checks
 
 # 0.3.0 2017-10-11 - _Dep Updates_
-This release updates dependencies to the latest versions, which closes a few issues. This release has *breaking changes* compared to `0.2`
+
+This release updates dependencies to the latest versions, which closes a few issues. This release has _breaking changes_ compared to `0.2`
 
 ## Use @ionic-native
 
-Ionic has restructured Ionic Native into multiple packages, rather than one monolith. We now use `@ionic-native/*` package dependencies now too. This closes #13 
+Ionic has restructured Ionic Native into multiple packages, rather than one monolith. We now use `@ionic-native/*` package dependencies now too. This closes #13
 
 ### Update Instructions
 
@@ -51,9 +79,11 @@ You now need to add a provider for the translate service in order for the Angula
 The rest should work same as before.
 
 # 0.2.1 - 2017-07-18
+
 This is a minor update that changes the peer dependency from ng2-translate to the current ngx-translate. Thanks @zbarbuto for the update.
 
 # 0.2.0 - 2017-04-28 _Local Storage_
+
 This release integrates ionic-native/storage. ManUp will save the metadata from the remote URL to Storage. If for some reason the remote URL cannot be reached, ManUp will use the cached version in Local Storage.
 
 To get this functionality your app needs to be bootstrapped with Ionic Storage. If Storage is not in use, ManUp will continue working in the same way it did in the previous version.
@@ -77,12 +107,11 @@ Languages supported are currently limited to English and a Google Translated Spa
 #### Boostrap ng2-translate with your app!
 
 ```ts
-    import { ManUpModule } from 'ionic-manup';
-    import { TranslateModule } from 'ng2-translate';
+import { ManUpModule } from 'ionic-manup';
+import { TranslateModule } from 'ng2-translate';
 
-    // in your module's import array
-    TranslateModule.forRoot(),
-    ManUpModule.forRoot({url: 'https://example.com/manup.json'})
+// in your module's import array
+TranslateModule.forRoot(), ManUpModule.forRoot({ url: 'https://example.com/manup.json' });
 ```
 
 Note: This is an absolute bare minimum example of loading the module. Follow the instructions linked to above for how to use `ng2-translate` in your app.
@@ -94,7 +123,6 @@ If you want to further customise the messages, you can provide your own translat
 #### Setup your language files
 
 Follow the instructions for setting up `ng2-translate` with your Ionic 2 app, and add the following tree to your language files:
-
 
 ```json
  {
@@ -126,13 +154,14 @@ Follow the instructions for setting up `ng2-translate` with your Ionic 2 app, an
 You need to tell ManUp to use external translations. Modify your Bootstrap like this:
 
 ```ts
-    import { ManUpModule } from 'ionic-manup';
+import { ManUpModule } from 'ionic-manup';
 
-    // in your module's import array
-    ManUpModule.forRoot({url: 'https://example.com/manup.json', externalTranslations: true})
+// in your module's import array
+ManUpModule.forRoot({ url: 'https://example.com/manup.json', externalTranslations: true });
 ```
 
 # 0.0.6 - 2017-03-03
+
 A minor release that fixes a problem with type definitions that should have been fixed in 0.0.5 but wasn't.
 
 # 0.0.5 - 2017-02-17 _Metadata Stability_
@@ -140,8 +169,9 @@ A minor release that fixes a problem with type definitions that should have been
 0.0.5 has some breaking changes to what the `manup.json` metadata file should look like. I expect the format will be stable going forward, perhaps with new keys added, but no more breaking changes to what the file should look like.
 
 ## New Stuff
-- Adds support for the windows platform (yay!)
-- Mostly refactoring code to more easily test
+
+* Adds support for the windows platform (yay!)
+* Mostly refactoring code to more easily test
 
 ## Breaking Changes
 
@@ -153,26 +183,26 @@ We started with the project using `Manup` in code. However, since that is short 
 
 Here's a complete example, below are the things that have changed from 0.0.4.
 
-``` json
+```json
 {
-    "ios": {
-        "minimum": "0.0.1",
-        "latest": "1.0.0",
-        "url": "http://example.com",
-        "enabled": true
-    },
-    "android": {
-        "minimum": "1.0.0",
-        "latest": "1.0.0",
-        "url": "http://example.com",
-        "enabled": true
-    },
-    "windows": {
-        "minimum": "1.0.0",
-        "latest": "1.0.0",
-        "url": "http://example.com",
-        "enabled": false
-    }
+  "ios": {
+    "minimum": "0.0.1",
+    "latest": "1.0.0",
+    "url": "http://example.com",
+    "enabled": true
+  },
+  "android": {
+    "minimum": "1.0.0",
+    "latest": "1.0.0",
+    "url": "http://example.com",
+    "enabled": true
+  },
+  "windows": {
+    "minimum": "1.0.0",
+    "latest": "1.0.0",
+    "url": "http://example.com",
+    "enabled": false
+  }
 }
 ```
 
@@ -183,7 +213,6 @@ The update url now uses the key `url` instead of `link`, which is a much better 
 #### Enabled/Disabled
 
 The app can be enabled or disabled (maintenance mode) on a per platform basis. So, each platform subtree of the metadata has its own `enabled` key. So, if your Windows version is broken and if you have no intention of fixing it, you can disable it without affecting other users.
-
 
 # 0.0.4 - 2017-02-04 _AoT Support_
 
