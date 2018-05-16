@@ -133,6 +133,18 @@ export class MyApp {
 
 The service uses [ngx-translate](https://www.npmjs.com/package/ng2-translate) to support languages other than English. This package is the way [recommended](https://ionicframework.com/docs/v2/resources/ng2-translate/) by the Ionic developers.
 
+If you are using ngx-translate it is important you set the current and default languages _before_ validating ManUp:
+
+```ts
+translateService.defaultLang = 'en';
+translateService.currentLang = 'es';
+manup.validate().then(() => {
+  // app init
+});
+```
+
+As a fallback, ManUp will default to English.
+
 ### With Built in translations
 
 To make life easy for app developers, the service includes its own translation strings. All you need to do is add `ngx-translate` to your Ionic app and set the active language. Due to the way AOT works, you also need to provide a `TRANSLATE_SERVICE` for ManUp to use.
