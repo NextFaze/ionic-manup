@@ -139,8 +139,10 @@ export class ManUpService {
                 case AlertType.NOP:
                   resolve();
                   break;
-                default:
-                  return this.presentAlert(result, platformData);
+                default: {
+                  await this.presentAlert(result, platformData);
+                  resolve();
+                }
               }
             } catch (e) {
               return resolve();
