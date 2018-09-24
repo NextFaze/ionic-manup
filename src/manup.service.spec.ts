@@ -2,15 +2,19 @@ import 'rxjs/add/observable/of';
 
 import { Observable } from 'rxjs/Observable';
 import { setTimeout } from 'timers';
-import { error } from 'util';
 
 import { i18n } from './i18n';
 import { ManUpConfig } from './manup.config';
 import { AlertType, ManUpService } from './manup.service';
 
 class MockAppVersion {
+  static defaultVersion = '2.3.4';
+  static version = '2.3.4';
+  public static reset() {
+    this.version = this.defaultVersion;
+  }
   public static getVersionNumber() {
-    return Promise.resolve('2.3.4');
+    return Promise.resolve(MockAppVersion.version);
   }
 }
 
@@ -25,13 +29,12 @@ describe('Manup Spec', function() {
         externalTranslations: true
       };
       mockTranslate = {
-        setTranslation: function() {}
+        setTranslation: jasmine.createSpy('setTranslation').and.returnValue(Promise.resolve())
       };
       manup = new ManUpService(<any>config, null, null, null, null, null, mockTranslate, null);
     });
 
     it('Should load translations for a language we support', () => {
-      spyOn(mockTranslate, 'setTranslation');
       mockTranslate.currentLang = 'en';
       manup.loadTranslations();
       expect(mockTranslate.setTranslation).toHaveBeenCalledWith('en', i18n.en.translations, true);
@@ -39,14 +42,12 @@ describe('Manup Spec', function() {
     it('Should load translations for the default lang if we dont support the requested lang', () => {
       mockTranslate.defaultLang = 'it';
       mockTranslate.currentLang = 'asdf';
-      spyOn(mockTranslate, 'setTranslation');
       manup.loadTranslations();
       expect(mockTranslate.setTranslation).toHaveBeenCalledWith('it', i18n.it.translations, true);
     });
     it('Should load english if we dont support the requested or default languages', () => {
       mockTranslate.defaultLang = 'notReal';
       mockTranslate.currentLang = 'asdf';
-      spyOn(mockTranslate, 'setTranslation');
       manup.loadTranslations();
       expect(mockTranslate.setTranslation).toHaveBeenCalledWith(
         'notReal',
@@ -58,10 +59,10 @@ describe('Manup Spec', function() {
 
   describe('validate', function() {
     let json = {
-      minimum: '2.3.5',
-      latest: '2.3.5',
+      minimum: '2.4.5',
+      latest: '2.4.5',
       url: 'http://example.com',
-      enabled: false
+      enabled: true
     };
     const mockTranslate = {
       setTranslation: function() {}
@@ -72,10 +73,7 @@ describe('Manup Spec', function() {
           json: function(): Object {
             return {
               ios: {
-                minimum: '2.4.5',
-                latest: '2.4.5',
-                enabled: true,
-                url: 'http://http.example.com'
+                ...json
               }
             };
           }
@@ -87,8 +85,18 @@ describe('Manup Spec', function() {
       url: 'http://example.com'
     };
     const mockAlert = {
-      create: function() {}
+      create: jasmine.createSpy('create').and.returnValue(Promise.resolve())
     };
+
+    beforeEach(() => {
+      json = {
+        minimum: '2.4.5',
+        latest: '2.4.5',
+        url: 'http://example.com',
+        enabled: true
+      };
+      MockAppVersion.reset();
+    });
 
     it('should call presentAlert with the platform data', done => {
       const mockPlatform = {
@@ -114,7 +122,7 @@ describe('Manup Spec', function() {
           minimum: '2.4.5',
           latest: '2.4.5',
           enabled: true,
-          url: 'http://http.example.com'
+          url: 'http://example.com'
         });
         done();
       }, 1000);
@@ -143,6 +151,38 @@ describe('Manup Spec', function() {
       } catch (e) {
         expect(e).toBeUndefined();
       }
+    });
+
+    it('Promise resolves once optional alert resolves', async () => {
+      const mockPlatform = {
+        ready: () => Promise.resolve(),
+        is: (platform: string) => platform === 'ios'
+      };
+
+      json.minimum = '2.0.0';
+      json.latest = '2.5.0';
+
+      MockAppVersion.version = '2.4.0';
+
+      let manup = new ManUpService(
+        config,
+        <any>mockHttp,
+        <any>mockAlert,
+        <any>mockPlatform,
+        null,
+        <any>MockAppVersion,
+        null,
+        null
+      );
+      spyOn(manup, 'presentAlert');
+
+      await manup.validate();
+      expect(manup.presentAlert).toHaveBeenCalledWith(AlertType.OPTIONAL, {
+        minimum: '2.0.0',
+        latest: '2.5.0',
+        enabled: true,
+        url: 'http://example.com'
+      });
     });
   });
 
@@ -312,16 +352,9 @@ describe('Manup Spec', function() {
       let manup: any;
 
       beforeAll(done => {
-        manup = new ManUpService(
-          config,
-          <any>mockHttp,
-          null,
-          null,
-          null,
-          null,
-          null,
-          <any>mockStorage
-        );
+        manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null, <any>(
+          mockStorage
+        ));
         spyOn(mockHttp, 'get').and.callThrough();
         spyOn(manup, 'saveMetadata').and.callThrough();
         manup.metadata().then((data: any) => {
@@ -374,48 +407,27 @@ describe('Manup Spec', function() {
       });
 
       it('Should make an http request', function(done) {
-        let manup = new ManUpService(
-          config,
-          <any>mockHttp,
-          null,
-          null,
-          null,
-          null,
-          null,
-          <any>mockStorage
-        );
+        let manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null, <any>(
+          mockStorage
+        ));
         manup.metadata().then(data => {
           expect(mockHttp.get).toHaveBeenCalled();
           done();
         });
       });
       it('Should fallback to storage', function(done) {
-        let manup = new ManUpService(
-          config,
-          <any>mockHttp,
-          null,
-          null,
-          null,
-          null,
-          null,
-          <any>mockStorage
-        );
+        let manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null, <any>(
+          mockStorage
+        ));
         manup.metadata().then(data => {
           expect(mockStorage.get).toHaveBeenCalled();
           done();
         });
       });
       it('Should return json', function(done) {
-        let manup = new ManUpService(
-          config,
-          <any>mockHttp,
-          null,
-          null,
-          null,
-          null,
-          null,
-          <any>mockStorage
-        );
+        let manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null, <any>(
+          mockStorage
+        ));
         manup.metadata().then(data => {
           expect(data.ios).toBeDefined();
           expect(data.ios.url).toBe('http://storage.example.com');
