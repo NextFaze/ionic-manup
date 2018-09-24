@@ -1,3 +1,9 @@
+# 0.4.1 2018-09-24 - Fix optional update
+
+Bug fix release corrects a problem where the `validate` promise was not
+resolving even after the update alert had been dismissed. Thanks to @kfrederix
+for finding and providing the fix to this!
+
 # 0.4.0 2018-05-16 - Fix i18n issues, add Italian language
 
 This release fixes issues with how ngx-translate was being used with ManUp. ManUp now loads its translation strings just before it needs to prevent an alert. Previously, it loaded translation strings on initialisation. This could cause issues with the host app losing translation strings, or ManUp showing raw untranslated strings to the user when presenting an alert.
@@ -170,8 +176,8 @@ A minor release that fixes a problem with type definitions that should have been
 
 ## New Stuff
 
-* Adds support for the windows platform (yay!)
-* Mostly refactoring code to more easily test
+- Adds support for the windows platform (yay!)
+- Mostly refactoring code to more easily test
 
 ## Breaking Changes
 

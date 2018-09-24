@@ -12,36 +12,37 @@ does.
 
 Mandatory Update (manup) works like this:
 
-1. Your app starts up, before performing any application initialization, it
-   downloads a small file from a remote server
+1.  Your app starts up, before performing any application initialization, it
+    downloads a small file from a remote server
 
-2. The small file contains the following information
-   * The current latest version of the app
-   * The minimum required version
-   * Whether the app is enabled
+2.  The small file contains the following information
 
-3. The app compares itself with the version metadata, and presents an alert to
-   the user. Alerts come in three flavours
-   * Mandatory Update required. The user will be notified that they need to
-     update to continue. The alert has a link to the relevant app store.
-   * Optional Update. The user will be notified there is an update, but will
-     have the option to continue using the current version
-   * Maintenance Mode. The user will be notified that the app is unavailable,
-     and to try again later.
+    * The current latest version of the app
+    * The minimum required version
+    * Whether the app is enabled
 
-4. The app waits for the manup service to complete, then continues
-   initialisation like normal
+3.  The app compares itself with the version metadata, and presents an alert to
+    the user. Alerts come in three flavours
+
+    * Mandatory Update required. The user will be notified that they need to
+      update to continue. The alert has a link to the relevant app store.
+    * Optional Update. The user will be notified there is an update, but will
+      have the option to continue using the current version
+    * Maintenance Mode. The user will be notified that the app is unavailable,
+      and to try again later.
+
+4.  The app waits for the manup service to complete, then continues
+    initialisation like normal
 
 ## Requirements
 
- * Ionic >2 
- * Angular >2
- * `@ionic/storage` (used for caching)
- * `@ionic-native/app-version` 
- * `cordova-plugin-app-version`
- * `@ionic-native/in-app-browser` 
- * `cordova-plugin-inappbrowser` to launch the link to the app/play store
-
+* Ionic >2
+* Angular >2
+* `@ionic/storage` (used for caching)
+* `@ionic-native/app-version`
+* `cordova-plugin-app-version`
+* `@ionic-native/in-app-browser`
+* `cordova-plugin-inappbrowser` to launch the link to the app/play store
 
 In your ionic project root:
 
@@ -53,8 +54,9 @@ ionic cordova plugin add cordova-plugin-inappbrowser
 
 Manup assumes you are using Semantic Versioning for your app.
 
- ### Optional
- * `@ngx-translate/core` Needed to handle translations
+### Optional
+
+* `@ngx-translate/core` Needed to handle translations
 
 ## Installation
 
@@ -65,7 +67,8 @@ npm install --save ionic-manup
 ## Usage
 
 ### Remote file
-You need a hosted json file that contains the version metadata. This _could_ be part of your API. However, 
+
+You need a hosted json file that contains the version metadata. This _could_ be part of your API. However,
 often the reason for maintenance mode is because your API is down. An s3 bucket may be a safer bet,
 even though it means a little more work in maintaining the file.
 
@@ -82,7 +85,7 @@ even though it means a little more work in maintaining the file.
     "minimum": "2.1.0",
     "url": "http://example.com/myAppUpdate/android",
     "enabled": true
-  },
+  }
 }
 ```
 
@@ -91,10 +94,10 @@ even though it means a little more work in maintaining the file.
 Import the module into your `app.module.ts` file, and call `ManUpModule.forRoot`, providing the URL to your metadata file:
 
 ```ts
-    import { ManUpModule } from 'ionic-manup';
+import { ManUpModule } from 'ionic-manup';
 
-    // in your module's import array
-    ManUpModule.forRoot({url: 'https://example.com/manup.json'})
+// in your module's import array
+ManUpModule.forRoot({ url: 'https://example.com/manup.json' });
 ```
 
 ### Run the manup service before doing any application initialisation logic
@@ -112,7 +115,6 @@ import { ManUpService } from 'ionic-manup';
   templateUrl: 'app.html'
 })
 export class MyApp {
-
   constructor(platform: Platform, private manup: ManUpService) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
@@ -120,10 +122,9 @@ export class MyApp {
       StatusBar.styleDefault();
       Splashscreen.hide();
 
-      manup.validate().then( () => {
+      manup.validate().then(() => {
         // app initialisation
-      })
-
+      });
     });
   }
 }
@@ -195,7 +196,6 @@ If you want to further customise the messages, you can provide your own translat
 
 Follow the instructions for setting up `ngx-translate` with your Ionic 2 app, and add the following tree to your language files:
 
-
 ```json
  {
    ...
@@ -226,10 +226,10 @@ Follow the instructions for setting up `ngx-translate` with your Ionic 2 app, an
 You need to tell ManUp to use external translations. Modify your Bootstrap like this:
 
 ```ts
-    import { ManUpModule } from 'ionic-manup';
+import { ManUpModule } from 'ionic-manup';
 
-    // in your module's import array
-    ManUpModule.forRoot({url: 'https://example.com/manup.json', externalTranslations: true})
+// in your module's import array
+ManUpModule.forRoot({ url: 'https://example.com/manup.json', externalTranslations: true });
 ```
 
 ## Demonstration App
