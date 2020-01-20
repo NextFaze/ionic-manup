@@ -3,11 +3,11 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
 import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
-import { Http } from '@angular/http';
-import { AppVersion } from '@ionic-native/app-version';
-import { InAppBrowser } from '@ionic-native/in-app-browser';
+import { HttpClient } from '@angular/common/http';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { Storage } from '@ionic/storage';
-import { AlertController, Platform } from 'ionic-angular';
+import { AlertController, Platform } from '@ionic/angular';
 import * as semver from 'semver';
 
 import { i18n } from './i18n';
@@ -65,7 +65,7 @@ export interface ManUpData {
 export class ManUpService {
   public constructor(
     private config: ManUpConfig,
-    private http: Http,
+    private http: HttpClient,
     private alert: AlertController,
     private platform: Platform,
     private iab: InAppBrowser,
@@ -181,7 +181,7 @@ export class ManUpService {
     try {
       const response = await this.http
         .get(this.config.url)
-        .map(response => response.json())
+        .map(response => response)
         .toPromise();
 
       if (this.storage) {
@@ -242,7 +242,7 @@ export class ManUpService {
     if (this.platform.is('android')) {
       return metadata.android;
     }
-    if (this.platform.is('windows')) {
+    if (this.platform.is('desktop')) {
       return metadata.windows;
     }
     throw new Error('Unknown platform');
@@ -281,16 +281,15 @@ export class ManUpService {
   presentMaintenanceMode(): Promise<any> {
     return this.AppVersion.getAppName().then((name: string) => {
       return new Promise((resolve, reject) => {
-        let alert = this.alert.create({
-          enableBackdropDismiss: false,
-          title: this.translate
+         this.alert.create({
+           backdropDismiss: false,
+          header: this.translate
             ? this.translate.instant('manup.maintenance.title', { app: name })
             : `${name} Unavailable`,
-          subTitle: this.translate
+          subHeader: this.translate
             ? this.translate.instant('manup.maintenance.text', { app: name })
             : `${name} is currently unavailable. Please check back later`
-        });
-        alert.present();
+        }).then(alert => alert.present());
       });
     });
   }
@@ -303,12 +302,12 @@ export class ManUpService {
   presentMandatoryUpdate(platformData: any): Promise<any> {
     return this.AppVersion.getAppName().then((name: string) => {
       return new Promise((resolve, reject) => {
-        let alert = this.alert.create({
-          enableBackdropDismiss: false,
-          title: this.translate
+        this.alert.create({
+          backdropDismiss: false,
+          header: this.translate
             ? this.translate.instant('manup.mandatory.title', { app: name })
             : 'Update Required',
-          subTitle: this.translate
+          subHeader: this.translate
             ? this.translate.instant('manup.mandatory.text', { app: name })
             : `An update to ${name} is required to continue.`,
           buttons: [
@@ -320,8 +319,7 @@ export class ManUpService {
               }
             }
           ]
-        });
-        alert.present();
+        }).then(alert => alert.present());
       });
     });
   }
@@ -334,12 +332,12 @@ export class ManUpService {
   presentOptionalUpdate(platformData: any): Promise<any> {
     return this.AppVersion.getAppName().then((name: string) => {
       return new Promise((resolve, reject) => {
-        let alert = this.alert.create({
-          enableBackdropDismiss: false,
-          title: this.translate
+        this.alert.create({
+          backdropDismiss: false,
+          header: this.translate
             ? this.translate.instant('manup.optional.title', { app: name })
             : 'Update Available',
-          subTitle: this.translate
+          subHeader: this.translate
             ? this.translate.instant('manup.optional.text', { app: name })
             : `An update to ${name} is available. Would you like to update?`,
           buttons: [
@@ -357,8 +355,8 @@ export class ManUpService {
               }
             }
           ]
-        });
-        alert.present();
+        }).then(alert => alert.present());
+
       });
     });
   }
