@@ -286,7 +286,8 @@ export class ManUpService {
               : `${name} Unavailable`,
           subHeader: this.translate
               ? this.translate.instant('manup.maintenance.text', { app: name })
-              : `${name} is currently unavailable. Please check back later`
+              : `${name} is currently unavailable. Please check back later`,
+          cssClass: 'app-update-alert',
         }).then(alert => alert.present());
       });
     });
@@ -308,6 +309,7 @@ export class ManUpService {
           subHeader: this.translate
               ? this.translate.instant('manup.mandatory.text', { app: name })
               : `An update to ${name} is required to continue.`,
+          cssClass: 'app-update-alert',
           buttons: [
             {
               text: this.translate ? this.translate.instant('manup.buttons.update') : 'Update',
@@ -338,6 +340,7 @@ export class ManUpService {
           subHeader: this.translate
               ? this.translate.instant('manup.optional.text', { app: name })
               : `An update to ${name} is available. Would you like to update?`,
+          cssClass: 'app-update-alert',
           buttons: [
             {
               text: this.translate ? this.translate.instant('manup.buttons.later') : 'Not Now',
