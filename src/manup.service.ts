@@ -181,7 +181,7 @@ export class ManUpService {
     try {
       const response = await this.http
           .get(this.config.url).pipe(
-            map((response: Response) => response.json())
+            map((response: ManUpData) => response)
           ).toPromise();
 
       if (this.storage) {
