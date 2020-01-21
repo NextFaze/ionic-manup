@@ -1,11 +1,11 @@
 import 'rxjs/add/observable/of';
 
-import { Observable } from 'rxjs/Observable';
 import { setTimeout } from 'timers';
 
 import { i18n } from './i18n';
 import { ManUpConfig } from './manup.config';
 import { AlertType, ManUpService } from './manup.service';
+import {Observable, of} from "rxjs";
 
 class MockAppVersion {
   static defaultVersion = '2.3.4';
@@ -69,7 +69,7 @@ describe('Manup Spec', function() {
     };
     const mockHttp = {
       get: function(url: string): Observable<Object> {
-        return Observable.of({
+        return of({
           json: function(): Object {
             return {
               ios: {
@@ -257,7 +257,7 @@ describe('Manup Spec', function() {
     describe('Http route, no storage configured', () => {
       let mockHttp = {
         get: function(url: string): Observable<Object> {
-          return Observable.of({
+          return of({
             json: function(): Object {
               return {
                 ios: {
@@ -309,7 +309,7 @@ describe('Manup Spec', function() {
       it('Should throw an exception if http returns null as it does from time to time', done => {
         let mockHttpErr = {
           get: function(url: string): Observable<Object> {
-            return Observable.of(null);
+            return of(null);
           }
         };
         let manup = new ManUpService(config, <any>mockHttpErr, null, null, null, null, null, null);
@@ -329,7 +329,7 @@ describe('Manup Spec', function() {
     describe('Http route, with storage', () => {
       let mockHttp = {
         get: function(url: string): Observable<Object> {
-          return Observable.of({
+          return of({
             json: function(): Object {
               return {
                 ios: {
