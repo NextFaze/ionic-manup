@@ -1,3 +1,5 @@
+## 🚧This repo is no longer actively maintained but we still review and accept any pull requests
+
 # Mandatory Update for Ionic 2+
 
 [![Build
