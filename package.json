@@ -5,7 +5,7 @@
   "main": "lib/main.js",
   "typings": "lib/main",
   "scripts": {
-    "clean": "del /f lib",
+    "clean": "rm -rf lib",
     "mocha": "node_modules/.bin/mocha",
     "posttest": "npm run coveralls",
     "tsc": "node_modules/.bin/tsc",
