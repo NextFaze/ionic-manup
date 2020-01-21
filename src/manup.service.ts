@@ -10,6 +10,7 @@ import {AlertController, Platform} from "@ionic/angular";
 import {HttpClient} from "@angular/common/http";
 import {InAppBrowser} from "@ionic-native/in-app-browser/ngx";
 import {Storage} from '@ionic/storage';
+import {map} from "rxjs/operators";
 
 
 /**
@@ -179,8 +180,9 @@ export class ManUpService {
   public async metadata(): Promise<ManUpData> {
     try {
       const response = await this.http
-          .get(this.config.url)
-          .toPromise();
+          .get(this.config.url).pipe(
+            map((response: Response) => response.json())
+          ).toPromise();
 
       if (this.storage) {
         this.saveMetadata(response).catch(() => {});

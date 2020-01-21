@@ -565,7 +565,7 @@ describe('Manup Spec', function() {
     it('should return windows metadata if platform is windows', function() {
       let mockPlatform = {
         is: function(v: String) {
-          return v === 'windows';
+          return v === 'desktop';
         }
       };
       let manup = new ManUpService(null, null, null, <any>mockPlatform, null, null, null, null);
