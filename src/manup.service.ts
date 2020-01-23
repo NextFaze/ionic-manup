@@ -1,17 +1,13 @@
-
-
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { AlertController, Platform } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
+import { map } from 'rxjs/operators';
 import * as semver from 'semver';
-
 import { i18n } from './i18n';
 import { ManUpConfig } from './manup.config';
-import {Inject, Injectable, InjectionToken, Optional} from "@angular/core";
-import {AppVersion} from "@ionic-native/app-version/ngx";
-import {AlertController, Platform} from "@ionic/angular";
-import {HttpClient} from "@angular/common/http";
-import {InAppBrowser} from "@ionic-native/in-app-browser/ngx";
-import {Storage} from '@ionic/storage';
-import {map} from "rxjs/operators";
-
 
 /**
  * DI InjectionToken for optional ngx-translate
@@ -59,21 +55,22 @@ export interface ManUpData {
   ios?: PlatformData;
   android?: PlatformData;
   windows?: PlatformData;
+  desktop?: PlatformData;
 }
 
 @Injectable()
 export class ManUpService {
   public constructor(
-      private config: ManUpConfig,
-      private http: HttpClient,
-      private alert: AlertController,
-      private platform: Platform,
-      private iab: InAppBrowser,
-      private AppVersion: AppVersion,
-      @Optional()
-      @Inject(TRANSLATE_SERVICE)
-      private translate: any,
-      @Optional() private storage: Storage
+    private config: ManUpConfig,
+    private http: HttpClient,
+    private alert: AlertController,
+    private platform: Platform,
+    private iab: InAppBrowser,
+    private AppVersion: AppVersion,
+    @Optional()
+    @Inject(TRANSLATE_SERVICE)
+    private translate: any,
+    @Optional() private storage: Storage
   ) {}
 
   /**
@@ -86,17 +83,17 @@ export class ManUpService {
   public loadTranslations() {
     if (i18n[this.translate.currentLang]) {
       this.translate.setTranslation(
-          this.translate.currentLang,
-          i18n[this.translate.currentLang].translations,
-          true
+        this.translate.currentLang,
+        i18n[this.translate.currentLang].translations,
+        true
       );
     }
     // load the default language, if we have it
     else if (i18n[this.translate.defaultLang]) {
       this.translate.setTranslation(
-          this.translate.defaultLang,
-          i18n[this.translate.defaultLang].translations,
-          true
+        this.translate.defaultLang,
+        i18n[this.translate.defaultLang].translations,
+        true
       );
     }
     // fall back to english, so we never see the raw translation strings
@@ -180,10 +177,16 @@ export class ManUpService {
   public async metadata(): Promise<ManUpData> {
     try {
       const response = await this.http
-          .get(this.config.url).pipe(
-            map((response: ManUpData) => response)
-          ).toPromise();
-
+        .get(this.config.url)
+        .pipe(
+          map((response: ManUpData) => {
+            if (!response) {
+              throw new Error('Empty Response');
+            }
+            return response;
+          })
+        )
+        .toPromise();
       if (this.storage) {
         this.saveMetadata(response).catch(() => {});
       }
@@ -243,7 +246,7 @@ export class ManUpService {
       return metadata.android;
     }
     if (this.platform.is('desktop')) {
-      return metadata.windows;
+      return metadata.desktop || metadata.windows;
     }
     throw new Error('Unknown platform');
   }
@@ -281,16 +284,18 @@ export class ManUpService {
   presentMaintenanceMode(): Promise<any> {
     return this.AppVersion.getAppName().then((name: string) => {
       return new Promise((resolve, reject) => {
-        this.alert.create({
-          backdropDismiss: false,
-          header: this.translate
+        this.alert
+          .create({
+            backdropDismiss: false,
+            header: this.translate
               ? this.translate.instant('manup.maintenance.title', { app: name })
               : `${name} Unavailable`,
-          subHeader: this.translate
+            subHeader: this.translate
               ? this.translate.instant('manup.maintenance.text', { app: name })
               : `${name} is currently unavailable. Please check back later`,
-          cssClass: 'app-update-alert',
-        }).then(alert => alert.present());
+            cssClass: 'app-update-alert'
+          })
+          .then(alert => alert.present());
       });
     });
   }
@@ -303,25 +308,27 @@ export class ManUpService {
   presentMandatoryUpdate(platformData: any): Promise<any> {
     return this.AppVersion.getAppName().then((name: string) => {
       return new Promise((resolve, reject) => {
-        this.alert.create({
-          backdropDismiss: false,
-          header: this.translate
+        this.alert
+          .create({
+            backdropDismiss: false,
+            header: this.translate
               ? this.translate.instant('manup.mandatory.title', { app: name })
               : 'Update Required',
-          subHeader: this.translate
+            subHeader: this.translate
               ? this.translate.instant('manup.mandatory.text', { app: name })
               : `An update to ${name} is required to continue.`,
-          cssClass: 'app-update-alert',
-          buttons: [
-            {
-              text: this.translate ? this.translate.instant('manup.buttons.update') : 'Update',
-              handler: () => {
-                this.iab.create(platformData.url, '_system');
-                return false;
+            cssClass: 'app-update-alert',
+            buttons: [
+              {
+                text: this.translate ? this.translate.instant('manup.buttons.update') : 'Update',
+                handler: () => {
+                  this.iab.create(platformData.url, '_system');
+                  return false;
+                }
               }
-            }
-          ]
-        }).then(alert => alert.present());
+            ]
+          })
+          .then(alert => alert.present());
       });
     });
   }
@@ -334,32 +341,33 @@ export class ManUpService {
   presentOptionalUpdate(platformData: any): Promise<any> {
     return this.AppVersion.getAppName().then((name: string) => {
       return new Promise((resolve, reject) => {
-        this.alert.create({
-          backdropDismiss: false,
-          header: this.translate
+        this.alert
+          .create({
+            backdropDismiss: false,
+            header: this.translate
               ? this.translate.instant('manup.optional.title', { app: name })
               : 'Update Available',
-          subHeader: this.translate
+            subHeader: this.translate
               ? this.translate.instant('manup.optional.text', { app: name })
               : `An update to ${name} is available. Would you like to update?`,
-          cssClass: 'app-update-alert',
-          buttons: [
-            {
-              text: this.translate ? this.translate.instant('manup.buttons.later') : 'Not Now',
-              handler: () => {
-                resolve();
+            cssClass: 'app-update-alert',
+            buttons: [
+              {
+                text: this.translate ? this.translate.instant('manup.buttons.later') : 'Not Now',
+                handler: () => {
+                  resolve();
+                }
+              },
+              {
+                text: this.translate ? this.translate.instant('manup.buttons.update') : 'Update',
+                handler: () => {
+                  this.iab.create(platformData.url, '_system');
+                  return false;
+                }
               }
-            },
-            {
-              text: this.translate ? this.translate.instant('manup.buttons.update') : 'Update',
-              handler: () => {
-                this.iab.create(platformData.url, '_system');
-                return false;
-              }
-            }
-          ]
-        }).then(alert => alert.present());
-
+            ]
+          })
+          .then(alert => alert.present());
       });
     });
   }

@@ -1,10 +1,8 @@
-
+import { Observable, of, throwError } from 'rxjs';
 import { setTimeout } from 'timers';
-
 import { i18n } from './i18n';
 import { ManUpConfig } from './manup.config';
 import { AlertType, ManUpService } from './manup.service';
-import {Observable, of} from "rxjs";
 
 class MockAppVersion {
   static defaultVersion = '2.3.4';
@@ -69,12 +67,8 @@ describe('Manup Spec', function() {
     const mockHttp = {
       get: function(url: string): Observable<Object> {
         return of({
-          json: function(): Object {
-            return {
-              ios: {
-                ...json
-              }
-            };
+          ios: {
+            ...json
           }
         });
       }
@@ -257,15 +251,11 @@ describe('Manup Spec', function() {
       let mockHttp = {
         get: function(url: string): Observable<Object> {
           return of({
-            json: function(): Object {
-              return {
-                ios: {
-                  minimum: '1.0.0',
-                  latest: '2.4.5',
-                  enabled: true,
-                  url: 'http://http.example.com'
-                }
-              };
+            ios: {
+              minimum: '1.0.0',
+              latest: '2.4.5',
+              enabled: true,
+              url: 'http://http.example.com'
             }
           });
         }
@@ -290,7 +280,7 @@ describe('Manup Spec', function() {
       it('Should throw an exception if http request fails', done => {
         let mockHttpErr = {
           get: function(url: string): Observable<Object> {
-            return Observable.throw(new Error('no good son'));
+            return throwError(new Error('no good son'));
           }
         };
         let manup = new ManUpService(config, <any>mockHttpErr, null, null, null, null, null, null);
@@ -329,15 +319,11 @@ describe('Manup Spec', function() {
       let mockHttp = {
         get: function(url: string): Observable<Object> {
           return of({
-            json: function(): Object {
-              return {
-                ios: {
-                  minimum: '1.0.0',
-                  latest: '2.4.5',
-                  enabled: true,
-                  url: 'http://http.example.com'
-                }
-              };
+            ios: {
+              minimum: '1.0.0',
+              latest: '2.4.5',
+              enabled: true,
+              url: 'http://http.example.com'
             }
           });
         }
@@ -351,9 +337,16 @@ describe('Manup Spec', function() {
       let manup: any;
 
       beforeAll(done => {
-        manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null, <any>(
-          mockStorage
-        ));
+        manup = new ManUpService(
+          config,
+          <any>mockHttp,
+          null,
+          null,
+          null,
+          null,
+          null,
+          <any>mockStorage
+        );
         spyOn(mockHttp, 'get').and.callThrough();
         spyOn(manup, 'saveMetadata').and.callThrough();
         manup.metadata().then((data: any) => {
@@ -361,6 +354,7 @@ describe('Manup Spec', function() {
           done();
         });
       });
+
       it('Should make an http request', () => {
         expect(mockHttp.get).toHaveBeenCalled();
       });
@@ -380,7 +374,7 @@ describe('Manup Spec', function() {
       beforeEach(() => {
         mockHttp = {
           get: function(url: string): Observable<Object> {
-            return Observable.throw(new Error('HTTP Failed'));
+            return throwError(new Error('HTTP Failed'));
           }
         };
         mockStorage = {
@@ -406,27 +400,48 @@ describe('Manup Spec', function() {
       });
 
       it('Should make an http request', function(done) {
-        let manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null, <any>(
-          mockStorage
-        ));
+        let manup = new ManUpService(
+          config,
+          <any>mockHttp,
+          null,
+          null,
+          null,
+          null,
+          null,
+          <any>mockStorage
+        );
         manup.metadata().then(data => {
           expect(mockHttp.get).toHaveBeenCalled();
           done();
         });
       });
       it('Should fallback to storage', function(done) {
-        let manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null, <any>(
-          mockStorage
-        ));
+        let manup = new ManUpService(
+          config,
+          <any>mockHttp,
+          null,
+          null,
+          null,
+          null,
+          null,
+          <any>mockStorage
+        );
         manup.metadata().then(data => {
           expect(mockStorage.get).toHaveBeenCalled();
           done();
         });
       });
       it('Should return json', function(done) {
-        let manup = new ManUpService(config, <any>mockHttp, null, null, null, null, null, <any>(
-          mockStorage
-        ));
+        let manup = new ManUpService(
+          config,
+          <any>mockHttp,
+          null,
+          null,
+          null,
+          null,
+          null,
+          <any>mockStorage
+        );
         manup.metadata().then(data => {
           expect(data.ios).toBeDefined();
           expect(data.ios.url).toBe('http://storage.example.com');
@@ -562,7 +577,7 @@ describe('Manup Spec', function() {
       expect(result).toEqual(json.android);
     });
 
-    it('should return windows metadata if platform is windows', function() {
+    it('should return windows metadata if platform is desktop', function() {
       let mockPlatform = {
         is: function(v: String) {
           return v === 'desktop';
