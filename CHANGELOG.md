@@ -1,3 +1,7 @@
+# 1.0.0 2019-01-24 - Support Ionic 4
+
+Add support to Ionic 4. Thanks to @Mohammad-shoman
+
 # 0.4.1 2018-09-24 - Fix optional update
 
 Bug fix release corrects a problem where the `validate` promise was not

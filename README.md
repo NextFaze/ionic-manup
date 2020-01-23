@@ -38,7 +38,7 @@ Mandatory Update (manup) works like this:
 
 ## Requirements
 
-* Ionic >2
+* Ionic >2 (Currently up to 4)
 * Angular >2
 * `@ionic/storage` (used for caching)
 * `@ionic-native/app-version`
