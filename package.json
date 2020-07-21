@@ -46,7 +46,7 @@
     "@types/node": "^7.0.5",
     "@types/semver": "^5.3.30",
     "angular2-template-loader": "^0.6.2",
-    "codecov": "^1.0.1",
+    "codecov": "^3.7.1",
     "coveralls": "^2.11.16",
     "ionic-angular": "^2.0.0",
     "istanbul-instrumenter-loader": "^3.0.0",
