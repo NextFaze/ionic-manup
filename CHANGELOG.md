@@ -1,4 +1,21 @@
-# 1.0.0 2019-01-24 - Support Ionic 4
+# 2.0.0 2020-07-24 - Support custom messages and ManUp failures
+
+See the READMe for update path.
+
+- Return the result of the ManUp run #26
+
+the call to `validate()` will now resolve with either:
+
+1. the `AlertType` result that happened or
+2. `null` if ManUp fails for some reason.
+
+- Allow support for custom messages
+
+- Fix calling `validate()` multiple times in one launch returning the same result.
+
+See the README for information on how to configure these messages in your ManUp file
+
+# 1.0.0 2020-01-24 - Support Ionic 4
 
 Add support to Ionic 4. Thanks to @Mohammad-shoman
 

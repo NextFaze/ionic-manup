@@ -38,7 +38,12 @@ export enum AlertType {
   /**
    * Nothing to see here
    */
-  NOP
+  NOP,
+}
+
+export interface AlertConfig {
+  title?: string;
+  text?: string;
 }
 
 export interface PlatformData {
@@ -46,6 +51,11 @@ export interface PlatformData {
   latest: string;
   url: string;
   enabled: boolean;
+  alerts?: {
+    maintenance?: AlertConfig;
+    mandatory?: AlertConfig;
+    optional?: AlertConfig;
+  };
 }
 
 /**
@@ -134,17 +144,22 @@ export class ManUpService {
               const result = await this.evaluate(platformData);
               switch (result) {
                 case AlertType.NOP:
-                  resolve();
+                  resolve(result);
                   break;
                 default: {
                   await this.presentAlert(result, platformData);
-                  resolve();
+                  resolve(result);
                 }
               }
             } catch (e) {
-              return resolve();
+              console.log(e);
+              return resolve(null);
             }
           });
+        }).then((result) => {
+          this.currentPromise = null;
+          this.inProgress = false;
+          return result;
         });
       }
       return this.currentPromise;
@@ -272,7 +287,7 @@ export class ManUpService {
         return this.presentOptionalUpdate(platformData);
 
       case AlertType.MAINTENANCE:
-        return this.presentMaintenanceMode();
+        return this.presentMaintenanceMode(platformData);
     }
   }
 
@@ -281,22 +296,24 @@ export class ManUpService {
    *
    * @returns a promise that will never resolve, because the app should not continue
    */
-  presentMaintenanceMode(): Promise<any> {
+  presentMaintenanceMode(platformData: PlatformData): Promise<any> {
     return this.AppVersion.getAppName().then((name: string) => {
-      return new Promise((resolve, reject) => {
-        this.alert
-          .create({
-            backdropDismiss: false,
-            header: this.translate
+      return this.alert
+        .create({
+          backdropDismiss: false,
+          header:
+            platformData?.alerts?.maintenance?.title ??
+            (this.translate
               ? this.translate.instant('manup.maintenance.title', { app: name })
-              : `${name} Unavailable`,
-            subHeader: this.translate
+              : `${name} Unavailable`),
+          subHeader:
+            platformData?.alerts?.maintenance?.text ??
+            (this.translate
               ? this.translate.instant('manup.maintenance.text', { app: name })
-              : `${name} is currently unavailable. Please check back later`,
-            cssClass: 'app-update-alert'
-          })
-          .then(alert => alert.present());
-      });
+              : `${name} is currently unavailable. Please check back later.`),
+          cssClass: 'app-update-alert',
+        })
+        .then((alert) => alert.present());
     });
   }
 
@@ -305,32 +322,35 @@ export class ManUpService {
    *
    * @returns a promise that will never resolve, because the app should not continue
    */
-  presentMandatoryUpdate(platformData: any): Promise<any> {
-    return this.AppVersion.getAppName().then((name: string) => {
-      return new Promise((resolve, reject) => {
-        this.alert
-          .create({
-            backdropDismiss: false,
-            header: this.translate
+  presentMandatoryUpdate(platformData: PlatformData): Promise<any> {
+    const useTranslate = !!this.translate;
+    return this.AppVersion.getAppName()
+      .then((name: string) => {
+        return this.alert.create({
+          backdropDismiss: false,
+          header:
+            platformData?.alerts?.mandatory?.title ??
+            (useTranslate
               ? this.translate.instant('manup.mandatory.title', { app: name })
-              : 'Update Required',
-            subHeader: this.translate
+              : 'Update Required'),
+          subHeader:
+            platformData?.alerts?.mandatory?.text ??
+            (useTranslate
               ? this.translate.instant('manup.mandatory.text', { app: name })
-              : `An update to ${name} is required to continue.`,
-            cssClass: 'app-update-alert',
-            buttons: [
-              {
-                text: this.translate ? this.translate.instant('manup.buttons.update') : 'Update',
-                handler: () => {
-                  this.iab.create(platformData.url, '_system');
-                  return false;
-                }
-              }
-            ]
-          })
-          .then(alert => alert.present());
-      });
-    });
+              : `An update to ${name} is required to continue.`),
+          cssClass: 'app-update-alert',
+          buttons: [
+            {
+              text: useTranslate ? this.translate.instant('manup.buttons.update') : 'Update',
+              handler: () => {
+                this.iab.create(platformData.url, '_system');
+                return false;
+              },
+            },
+          ],
+        });
+      })
+      .then((alert) => alert.present());
   }
 
   /**
@@ -338,37 +358,37 @@ export class ManUpService {
    *
    * @returns a promise that will resolves if the user selects 'not now'
    */
-  presentOptionalUpdate(platformData: any): Promise<any> {
+  presentOptionalUpdate(platformData: PlatformData): Promise<any> {
     return this.AppVersion.getAppName().then((name: string) => {
-      return new Promise((resolve, reject) => {
-        this.alert
-          .create({
-            backdropDismiss: false,
-            header: this.translate
+      return this.alert
+        .create({
+          backdropDismiss: false,
+          header:
+            platformData?.alerts?.optional?.title ??
+            (this.translate
               ? this.translate.instant('manup.optional.title', { app: name })
-              : 'Update Available',
-            subHeader: this.translate
+              : 'Update Available'),
+          subHeader:
+            platformData?.alerts?.optional?.text ??
+            (this.translate
               ? this.translate.instant('manup.optional.text', { app: name })
-              : `An update to ${name} is available. Would you like to update?`,
-            cssClass: 'app-update-alert',
-            buttons: [
-              {
-                text: this.translate ? this.translate.instant('manup.buttons.later') : 'Not Now',
-                handler: () => {
-                  resolve();
-                }
+              : `An update to ${name} is available. Would you like to update?`),
+          cssClass: 'app-update-alert',
+          buttons: [
+            {
+              text: this.translate ? this.translate.instant('manup.buttons.later') : 'Not Now',
+              handler: () => {},
+            },
+            {
+              text: this.translate ? this.translate.instant('manup.buttons.update') : 'Update',
+              handler: () => {
+                this.iab.create(platformData.url, '_system');
+                return false;
               },
-              {
-                text: this.translate ? this.translate.instant('manup.buttons.update') : 'Update',
-                handler: () => {
-                  this.iab.create(platformData.url, '_system');
-                  return false;
-                }
-              }
-            ]
-          })
-          .then(alert => alert.present());
-      });
+            },
+          ],
+        })
+        .then((alert) => alert.present());
     });
   }
 }

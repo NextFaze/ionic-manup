@@ -1,7 +1,7 @@
 {
   "name": "ionic-manup",
-  "version": "1.0.0",
-  "description": "Mandatory Update for Ionic 2 apps",
+  "version": "2.0.0",
+  "description": "Mandatory Update for Ionic 2+ apps",
   "main": "lib/main.js",
   "typings": "lib/main",
   "scripts": {
@@ -25,21 +25,21 @@
     "angular",
     "manup"
   ],
-  "author": "Michael Marner <npm-support@nextfaze.com>",
+  "author": "NextFaze <npm-support@nextfaze.com>",
   "license": "MIT",
   "devDependencies": {
     "@angular/animations": "^8.2.14",
     "@angular/common": "^8.2.14",
     "@angular/core": "^8.2.14",
     "@angular/forms": "^8.2.14",
-    "@ionic/angular": "^4.7.1",
-    "@angular/router": "^8.2.14",
     "@angular/platform-browser": "^8.2.14",
     "@angular/platform-browser-dynamic": "^8.2.14",
     "@angular/platform-server": "^4.4.3",
+    "@angular/router": "^8.2.14",
     "@ionic-native/app-version": "^5.18.0",
     "@ionic-native/core": "^5.18.0",
     "@ionic-native/in-app-browser": "^5.17.1",
+    "@ionic/angular": "^4.7.1",
     "@ionic/storage": "1.1.9",
     "@ngx-translate/core": "^7.0.0",
     "@types/jasmine": "2.5.38",
@@ -70,7 +70,7 @@
     "ts-node": "^2.1.0",
     "tslint": "^4.4.2",
     "tslint-eslint-rules": "^3.3.0",
-    "typescript": "3.4.5",
+    "typescript": "^3.9.7",
     "webpack": "^2.1.0-beta.25",
     "zone.js": "^0.6.26"
   },

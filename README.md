@@ -1,5 +1,18 @@
 ## 🚧This repo is no longer actively maintained but we still review and accept any pull requests
 
+### Upgrading from 1.0.0 to 2.0.0
+
+As of 2.0.0 `validate` returns a promise that resolves with the `AlertType` depending on the result of the ManUp run. one of:
+
+- `AlertType.OPTIONAL` - An optional update is available
+- `AlertType.MANDATORY` - A mandatory update is required
+- `AlertType.MAINTENANCE` - Application is disabled
+- `AlertType.NOP` No alerts were shown - all good to initialize as normal
+
+If the result is `null` it means there was an error fetching the ManUp result somewhere and ManUp could not resolve properly.
+
+This allows your app code to behave differently depending on the result.
+
 # Mandatory Update for Ionic 2+
 
 [![Build
@@ -19,18 +32,18 @@ Mandatory Update (manup) works like this:
 
 2.  The small file contains the following information
 
-    * The current latest version of the app
-    * The minimum required version
-    * Whether the app is enabled
+    - The current latest version of the app
+    - The minimum required version
+    - Whether the app is enabled
 
 3.  The app compares itself with the version metadata, and presents an alert to
     the user. Alerts come in three flavours
 
-    * Mandatory Update required. The user will be notified that they need to
+    - Mandatory Update required. The user will be notified that they need to
       update to continue. The alert has a link to the relevant app store.
-    * Optional Update. The user will be notified there is an update, but will
+    - Optional Update. The user will be notified there is an update, but will
       have the option to continue using the current version
-    * Maintenance Mode. The user will be notified that the app is unavailable,
+    - Maintenance Mode. The user will be notified that the app is unavailable,
       and to try again later.
 
 4.  The app waits for the manup service to complete, then continues
@@ -38,13 +51,13 @@ Mandatory Update (manup) works like this:
 
 ## Requirements
 
-* Ionic >2 (Currently up to 4)
-* Angular >2
-* `@ionic/storage` (used for caching)
-* `@ionic-native/app-version`
-* `cordova-plugin-app-version`
-* `@ionic-native/in-app-browser`
-* `cordova-plugin-inappbrowser` to launch the link to the app/play store
+- Ionic >2 (Currently up to 4)
+- Angular >2
+- `@ionic/storage` (used for caching)
+- `@ionic-native/app-version`
+- `cordova-plugin-app-version`
+- `@ionic-native/in-app-browser`
+- `cordova-plugin-inappbrowser` to launch the link to the app/play store
 
 In your ionic project root:
 
@@ -58,7 +71,7 @@ Manup assumes you are using Semantic Versioning for your app.
 
 ### Optional
 
-* `@ngx-translate/core` Needed to handle translations
+- `@ngx-translate/core` Needed to handle translations
 
 ## Installation
 
@@ -106,7 +119,16 @@ ManUpModule.forRoot({ url: 'https://example.com/manup.json' });
 
 Modify your `app.component` class to call ManupService.validate():
 
-`validate` returns a promise that resolves if the version check was ok and the app can continue initialising.
+`validate` returns a promise that resolves with an `AlertType` depending on the result. one of:
+
+- `AlertType.OPTIONAL` - An optional update is available
+- `AlertType.MANDATORY` - A mandatory update is required
+- `AlertType.MAINTENANCE` - Application is disabled
+- `AlertType.NOP` No alerts were shown - all good to initialize as normal
+
+If the result is `null` it means there was an error fetching the ManUp result somewhere and ManUp could not resolve properly.
+
+This allows your app code to behave differently depending on the result.
 
 ```ts
 import { Component } from '@angular/core';
@@ -114,7 +136,7 @@ import { Platform } from 'ionic-angular';
 import { ManUpService } from 'ionic-manup';
 
 @Component({
-  templateUrl: 'app.html'
+  templateUrl: 'app.html',
 })
 export class MyApp {
   constructor(platform: Platform, private manup: ManUpService) {
@@ -124,10 +146,50 @@ export class MyApp {
       StatusBar.styleDefault();
       Splashscreen.hide();
 
-      manup.validate().then(() => {
-        // app initialisation
+      manup.validate().then((result) => {
+        // app initialisation depending on result
       });
     });
+  }
+}
+```
+
+## Provide strings remotely
+
+One way to provide strings remotely is to [use remote translation configuration](#Internationalisation-Support)
+
+However, you can also configure the service to read messages directly from the ManUp json file:
+
+```
+{
+  "ios": {
+    "latest": "2.4.1",
+    "minimum": "2.1.0",
+    "url": "http://example.com/myAppUpdate",
+    "enabled": true,
+    "alerts": {
+      "maintenance": {
+        "title": "MyApp is currently no available",
+        "text": "We are performing some server updates and expect to be back in 2-3 hours"
+      },
+      "mandatory": {
+        "title": "New update required",
+        "text": "Our latest version fixes some critical bugs and is required to continue."
+      },
+      "optional": {
+        "title": "New update available",
+        "text": "A new update is available! It has some cool features."
+      }
+    }
+  },
+  "android": {
+    "latest": "2.5.1",
+    "minimum": "2.1.0",
+    "url": "http://example.com/myAppUpdate/android",
+    "enabled": true,
+    "alerts": {
+      // ... you could either use the same alerts for Android or different
+    }
   }
 }
 ```
@@ -141,8 +203,8 @@ If you are using ngx-translate it is important you set the current and default l
 ```ts
 translateService.defaultLang = 'en';
 translateService.currentLang = 'es';
-manup.validate().then(() => {
-  // app init
+manup.validate().then((err) => {
+  // app init depending on result
 });
 ```
 
@@ -154,9 +216,9 @@ To make life easy for app developers, the service includes its own translation s
 
 Languages supported are currently limited to English, Italian and a Google Translated Spanish. We would love pull requests for new languages. To add a language:
 
-* Create a new file `[lang].ts` for your language.
-* Using `en.ts` as an example, add the translations
-* Add the new language to `i18n/index.ts`
+- Create a new file `[lang].ts` for your language.
+- Using `en.ts` as an example, add the translations
+- Add the new language to `i18n/index.ts`
 
 #### Boostrap ngx-translate with your app!
 
