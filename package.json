@@ -30,6 +30,8 @@
   "devDependencies": {
     "@angular/animations": "^8.2.14",
     "@angular/common": "^8.2.14",
+    "@angular/compiler": "^10.0.5",
+    "@angular/compiler-cli": "^10.0.5",
     "@angular/core": "^8.2.14",
     "@angular/forms": "^8.2.14",
     "@angular/platform-browser": "^8.2.14",
@@ -85,8 +87,6 @@
     "zone.js": ">=0.6.26"
   },
   "dependencies": {
-    "@angular/compiler": "^8.2.14",
-    "@angular/compiler-cli": "^8.2.14",
     "semver": "^5.3.0"
   }
 }
